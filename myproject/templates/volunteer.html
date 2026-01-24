@@ -1,0 +1,218 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Volunteer Dashboard | Share a Meal</title>
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <!-- Leaflet -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        #map {
+            height: 260px;
+            border-radius: 12px;
+        }
+
+        /* Hide routing instructions */
+        .leaflet-routing-container {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="{% url 'home' %}">
+            <i class="fas fa-hand-holding-heart me-2"></i>Share a Meal
+        </a>
+
+        <div class="ms-auto d-flex align-items-center">
+            <span class="me-3 text-muted d-none d-md-inline">
+                Volunteer
+            </span>
+            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm me-2">
+                <i class="fas fa-home me-1"></i>Home
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+                Logout
+            </a>
+        </div>
+    </div>
+</nav>
+
+<!-- ================= HEADER ================= -->
+<div class="bg-primary text-white py-4 mb-4">
+    <div class="container text-center">
+        <h2 class="fw-bold mb-1">Volunteer Dashboard</h2>
+        <p class="mb-0 opacity-75">Active food rescue missions assigned to you</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+
+    <!-- ================= MAP CARD ================= -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white fw-bold">
+                    <i class="fas fa-map-marked-alt me-2 text-primary"></i>Delivery Routes
+                </div>
+                <div class="card-body p-2">
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= TASK LIST ================= -->
+    <div class="row g-4">
+        <div class="col-12">
+            <h5 class="fw-bold mb-3">
+                <i class="fas fa-route me-2 text-primary"></i>Assigned Deliveries
+            </h5>
+        </div>
+
+        {% for task in assigned_tasks %}
+        <div class="col-md-6 task-item" 
+             data-plat="{{ task.donor.latitude }}" 
+             data-plon="{{ task.donor.longitude }}"
+             data-dlat="{{ task.assigned_ngo.latitude }}" 
+             data-dlon="{{ task.assigned_ngo.longitude }}"
+             data-donor="{{ task.donor.organization_name|escapejs }}"
+             data-ngo="{{ task.assigned_ngo.organization_name|escapejs }}">
+            
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold text-primary mb-0">
+                            Delivery #{{ task.id }}
+                        </h6>
+                        <span class="badge bg-warning text-dark">
+                            {{ task.status }}
+                        </span>
+                    </div>
+
+                    <p class="mb-3">
+                        <i class="fas fa-utensils me-2 text-muted"></i>
+                        <strong>{{ task.name }}</strong><br>
+                        <small class="text-muted">Quantity: {{ task.food_quantity }}</small>
+                    </p>
+
+                    <div class="mb-3">
+                        <small class="text-uppercase text-muted fw-bold">Pickup From</small>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>{{ task.donor.organization_name }}</span>
+                            <a class="btn btn-sm btn-outline-primary"
+                               target="_blank"
+                               href="https://www.google.com/maps/dir/?api=1&destination={{ task.donor.latitude }},{{ task.donor.longitude }}">
+                                <i class="fas fa-location-arrow"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <small class="text-uppercase text-muted fw-bold">Deliver To</small>
+                        <div>{{ task.assigned_ngo.organization_name }}</div>
+                    </div>
+
+                    <div class="d-grid">
+                        <button class="btn btn-success">
+                            <i class="fas fa-check-circle me-2"></i>Mark as Delivered
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info text-center py-4">
+                <i class="fas fa-clipboard-check fa-2x mb-2"></i>
+                <h6 class="mb-1">All caught up!</h6>
+                <p class="mb-0">No active deliveries assigned right now.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+
+    const taskElements = document.querySelectorAll('.task-item');
+
+    // Default center
+    let centerLat = 22.3072;
+    let centerLon = 73.1812;
+
+    if (taskElements.length > 0) {
+        const first = taskElements[0];
+        centerLat = parseFloat(first.dataset.plat);
+        centerLon = parseFloat(first.dataset.plon);
+    }
+
+    const map = L.map('map').setView([centerLat, centerLon], 12);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // Draw Donor → NGO routes
+    taskElements.forEach(item => {
+        const pLat = parseFloat(item.dataset.plat);
+        const pLon = parseFloat(item.dataset.plon);
+        const dLat = parseFloat(item.dataset.dlat);
+        const dLon = parseFloat(item.dataset.dlon);
+        const donorName = item.dataset.donor;
+        const ngoName = item.dataset.ngo;
+
+        if (!isNaN(pLat) && !isNaN(dLat)) {
+            L.Routing.control({
+                waypoints: [
+                    L.latLng(pLat, pLon),
+                    L.latLng(dLat, dLon)
+                ],
+                router: L.Routing.osrmv1({
+                    serviceUrl: 'https://router.project-osrm.org/route/v1'
+                }),
+                lineOptions: {
+                    styles: [{ color: '#0d6efd', opacity: 0.85, weight: 5 }]
+                },
+                addWaypoints: false,
+                draggableWaypoints: false,
+                fitSelectedRoutes: true,
+                show: false,
+                createMarker: function(i, wp) {
+                    const label = (i === 0)
+                        ? `<b>Pickup:</b> ${donorName}`
+                        : `<b>Drop:</b> ${ngoName}`;
+                    return L.marker(wp.latLng).bindPopup(label);
+                }
+            }).addTo(map);
+        }
+    });
+
+});
+</script>
+
+</body>
+</html>

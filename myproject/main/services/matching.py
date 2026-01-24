@@ -1,0 +1,44 @@
+import math
+from main.models import NGO
+
+def haversine(lat1, lon1, lat2, lon2):
+    R = 6371  # Earth radius in km
+
+    dlat = math.radians(lat2 - lat1)
+    dlon = math.radians(lon2 - lon1)
+
+    a = (
+        math.sin(dlat / 2) ** 2 +
+        math.cos(math.radians(lat1)) *
+        math.cos(math.radians(lat2)) *
+        math.sin(dlon / 2) ** 2
+    )
+
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+    return R * c
+
+
+def find_nearest_receiver(donor):
+    """
+    donor: Donor model instance with latitude, longitude
+    returns: nearest Receiver instance or None
+    """
+
+    receivers = NGO.objects.all()
+
+    nearest = None
+    min_distance = float("inf")
+
+    for receiver in receivers:
+        d = haversine(
+            donor.latitude,
+            donor.longitude,
+            receiver.latitude,
+            receiver.longitude
+        )
+
+        if d < min_distance:
+            min_distance = d
+            nearest = receiver
+
+    return nearest, min_distance
