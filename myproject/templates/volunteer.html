@@ -129,11 +129,11 @@
                         <div>{{ task.assigned_ngo.organization_name }}</div>
                     </div>
 
-                    <div class="d-grid">
-                        <button class="btn btn-success">
-                            <i class="fas fa-check-circle me-2"></i>Mark as Delivered
-                        </button>
-                    </div>
+                    <button class="btn btn-success"
+                        onclick="acceptDelivery('{{ task.id }}', this)">
+                        <i class="fas fa-check-circle me-2"></i>Accept
+                    </button>
+
 
                 </div>
             </div>
@@ -212,6 +212,37 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 });
+
+function acceptDelivery(foodId, btn) {
+    fetch("{% url 'volunteer_accept_delivery' %}", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCSRF()
+        },
+        body: JSON.stringify({ food_id: foodId })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            // Remove the card from dashboard
+            const card = btn.closest('.task-item');
+            if(card) card.remove();
+            alert(data.message);
+        } else {
+            alert(data.error);
+        }
+    });
+}
+
+function getCSRF() {
+    return document.cookie.split('; ')
+        .find(row => row.startsWith('csrftoken='))
+        ?.split('=')[1];
+}
+
+
+
 </script>
 
 </body>

@@ -240,17 +240,20 @@ def volunteer_dashboard(request):
         return redirect('login')
 
     volunteer = request.user.volunteer
-    available_foods = Food.objects.filter(status="AVAILABLE")
+
+    #  NEW: Get only assigned deliveries with coordinates
+    assigned_tasks = Food.objects.filter(
+        status="ASSIGNED",
+        assigned_ngo__isnull=False
+    ).select_related('donor', 'assigned_ngo')
 
     return render(request, 'volunteer.html', {
         'volunteer': volunteer,
-        'available_foods': available_foods,
+        'assigned_tasks': assigned_tasks,   #  IMPORTANT: name must match template
     })
 
 
-
 # -------------------- DONOR DASHBOARD --------------------
-
 @login_required(login_url='login')
 def donor_dashboard(request):
     if not hasattr(request.user, 'donor'):
@@ -259,9 +262,68 @@ def donor_dashboard(request):
 
     donor = request.user.donor
 
-    my_foods = Food.objects.filter(donor=donor).order_by('-created_at')
+    # Get all foods for this donor with specific statuses
+    my_foods = Food.objects.filter(
+        donor=donor,
+        status__in=["AVAILABLE", "PENDING"]
+    ).select_related('assigned_ngo').order_by('-created_at')
+
+    # Calculate distance if NGO is assigned
+    for food in my_foods:
+        if food.assigned_ngo:
+            food.closest_distance_km = round(
+                calculate_distance(
+                    food.donor.latitude,
+                    food.donor.longitude,
+                    food.assigned_ngo.latitude,
+                    food.assigned_ngo.longitude
+                ), 2
+            )
+        else:
+            food.closest_distance_km = None
+
+    # ------------------- NEW: Stats -------------------
+    from django.utils import timezone
+    now = timezone.now()
+    start_of_month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    total_donations = Food.objects.filter(donor=donor).count()
+    monthly_donations = Food.objects.filter(donor=donor, created_at__gte=start_of_month).count()
+    # ---------------------------------------------------
 
     return render(request, 'donor.html', {
         'donor': donor,
         'my_foods': my_foods,
+        'total_donations': total_donations,
+        'monthly_donations': monthly_donations
+    })
+
+@require_POST
+@login_required
+def volunteer_accept_delivery(request):
+    if not hasattr(request.user, 'volunteer'):
+        return JsonResponse({
+            'success': False,
+            'error': 'Only volunteers can accept deliveries'
+        }, status=403)
+
+    data = json.loads(request.body)
+    food_id = data.get('food_id')
+
+    food = get_object_or_404(Food, id=food_id)
+
+    # Only allow accepting if currently assigned to an NGO
+    if food.status != "ASSIGNED":
+        return JsonResponse({
+            'success': False,
+            'error': 'This delivery is not available for pickup'
+        }, status=400)
+
+    #KEY CHANGE: Move to in-transit
+    food.status = "IN_TRANSIT"
+    food.save()
+
+    return JsonResponse({
+        'success': True,
+        'message': 'Delivery accepted by volunteer'
     })

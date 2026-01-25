@@ -25,6 +25,8 @@ urlpatterns = [
     # Actions & AJAX
     path('donor/create-food/', views.create_food_donation, name='create_food_donation'),
     path('accept-donation/', views.accept_donation, name='accept_donation'),
+    path('volunteer/accept-delivery/', views.volunteer_accept_delivery,    name='volunteer_accept_delivery'),
+    
 ]
 
 if settings.DEBUG:

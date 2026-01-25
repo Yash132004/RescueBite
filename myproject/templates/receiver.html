@@ -21,6 +21,22 @@
     </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-primary" href="{% url 'home' %}">
+            <i class="fas fa-hand-holding-heart me-2"></i>FoodShare
+        </a>
+
+        <div class="ms-auto d-flex align-items-center">
+            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm me-2">
+                <i class="fas fa-home me-1"></i>Home
+            </a>
+            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
+                <i class="fas fa-sign-out-alt me-1"></i>Logout
+            </a>
+        </div>
+    </div>
+</nav>
 
 <div class="hero-section shadow-sm">
     <div class="container text-center">
