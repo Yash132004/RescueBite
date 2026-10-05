@@ -160,7 +160,7 @@ def donation_page(request):
 @login_required
 def accept_donation(request):
 
-    # ✅ Proper role check
+    # Proper role check
     if not hasattr(request.user, 'ngo'):
         return JsonResponse({
             'success': False,
