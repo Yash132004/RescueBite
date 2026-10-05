@@ -1,5 +1,5 @@
 import math
-from main.models import NGO
+from ..models import NGO
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371  # Earth radius in km

@@ -97,7 +97,7 @@ def home(request):
                 return redirect('donor_dashboard')
 
     # Pass the counts to the template
-    return render(request, 'home.html', {
+    return render(request, 'main/home.html', {
         'vol_form': vol_form, 
         'ngo_form': ngo_form, 
         'donor_form': donor_form,
@@ -128,7 +128,7 @@ def create_food_donation(request):
     else:
         form = FoodDonationForm()
 
-    return render(request, 'donor.html', {'form': form, 'donor': donor})
+    return render(request, 'main/donor.html', {'form': form, 'donor': donor})
 
 # -------------------- NGO DASHBOARD --------------------
 @login_required(login_url='login')
@@ -149,7 +149,7 @@ def donation_page(request):
     )
 
 
-    return render(request, 'receiver.html', {
+    return render(request, 'main/receiver.html', {
         'foods': foods,
         'ngo': ngo
     })
@@ -221,7 +221,7 @@ def login_view(request):
         else:
             messages.error(request, "Invalid email or password.")
 
-    return render(request, "login.html")
+    return render(request, "main/login.html")
 
 
 # -------------------- LOGOUT --------------------
@@ -247,7 +247,7 @@ def volunteer_dashboard(request):
         assigned_ngo__isnull=False
     ).select_related('donor', 'assigned_ngo')
 
-    return render(request, 'volunteer.html', {
+    return render(request, 'main/volunteer.html', {
         'volunteer': volunteer,
         'assigned_tasks': assigned_tasks,   #  IMPORTANT: name must match template
     })
@@ -291,7 +291,7 @@ def donor_dashboard(request):
     monthly_donations = Food.objects.filter(donor=donor, created_at__gte=start_of_month).count()
     # ---------------------------------------------------
 
-    return render(request, 'donor.html', {
+    return render(request, 'main/donor.html', {
         'donor': donor,
         'my_foods': my_foods,
         'total_donations': total_donations,
