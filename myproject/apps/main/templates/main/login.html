@@ -1,207 +1,104 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - RescueBite</title>
+{% extends "main/base.html" %}
+{% load static %}
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+{% block title %}Login | RescueBite{% endblock %}
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f7fb;
-      color: #263238;
-    }
+{% block content %}
+    <main class="rb-auth">
+        <div class="rb-container rb-container--narrow">
 
-    header {
-      background: linear-gradient(135deg, #1E88E5 0%, #1976D2 100%);
-      color: white;
-      padding: 1rem 0;
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
+            <a class="rb-auth__back" href="{% url 'home' %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                    <path d="M19 12H5"/>
+                    <path d="m12 19-7-7 7-7"/>
+                </svg>
+                Back to home
+            </a>
 
-    nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
+            <div class="rb-auth__card">
+                <div class="rb-auth__brand">
+                    <span class="rb-auth__brand-mark" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils-crossed preview-icon"><path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"/><path d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"/><path d="m2.1 21.8 6.4-6.3"/><path d="m19 5-7 7"/></svg></span>
+                    <span class="rb-auth__brand-text">
+                        <h1 class="rb-auth__brand-name">RescueBite</h1>
+                        <span class="rb-auth__brand-tag">Rescue surplus food, share it safely</span>
+                    </span>
+                </div>
 
-    .logo {
-      font-size: 1.8rem;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
+                <div class="rb-auth__header">
+                    <h2>Welcome back</h2>
+                    <p>Sign in to keep surplus food moving.</p>
+                </div>
 
-    .nav-links {
-      display: flex;
-      list-style: none;
-      gap: 2rem;
-    }
+                {% include "main/partials/messages.html" %}
 
-    .nav-links a {
-      color: white;
-      text-decoration: none;
-      transition: opacity 0.3s;
-      font-weight: 500;
-    }
+                <form method="post" action="{% url 'login' %}" class="rb-form-stack" data-rb-login>
+                    {% csrf_token %}
 
-    .nav-links a:hover {
-      opacity: 0.8;
-    }
+                    <div class="rb-field">
+                        <label class="rb-field__label" for="id_email">Email address</label>
+                        <input type="email"
+                               id="id_email"
+                               name="email"
+                               class="rb-input"
+                               placeholder="you@example.org"
+                               autocomplete="email"
+                               autocapitalize="none"
+                               spellcheck="false"
+                               aria-describedby="emailHint"
+                               required>
+                        <p class="rb-field__hint" id="emailHint">
+                            Use the email address you registered with.
+                        </p>
+                    </div>
 
-    .login-container {
-      margin-top: 110px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: calc(100vh - 110px);
-    }
+                    <div class="rb-field">
+                        <label class="rb-field__label" for="id_password">Password</label>
+                        <div class="rb-field__wrap">
+                            <input type="password"
+                                   id="id_password"
+                                   name="password"
+                                   class="rb-input rb-input--trailing"
+                                   placeholder="Enter your password"
+                                   autocomplete="current-password"
+                                   aria-describedby="passwordHint"
+                                   required>
+                            <button type="button"
+                                    class="rb-reveal"
+                                    data-rb-reveal="id_password"
+                                    aria-pressed="false"
+                                    aria-controls="id_password"
+                                    aria-label="Show password"
+                                    title="Show password">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                     stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <p class="rb-field__hint" id="passwordHint">Passwords are case sensitive.</p>
+                    </div>
 
-    .login-card {
-      background: white;
-      padding: 3rem;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      max-width: 420px;
-      width: 100%;
-    }
+                    <div class="rb-auth__actions">
+                        <button type="submit" class="rb-btn rb-btn--primary rb-btn--lg">
+                            <span class="rb-spinner" data-rb-busy hidden aria-hidden="true"></span>
+                            <span data-rb-submit-label>Login</span>
+                        </button>
+                        <button type="button" class="rb-btn rb-btn--ghost rb-btn--lg" data-rb-clear>
+                            Clear
+                        </button>
+                    </div>
+                </form>
 
-    .login-card h2 {
-      color: #1E88E5;
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    .login-card p {
-      text-align: center;
-      color: #666;
-      margin-bottom: 2rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.9rem;
-      border: 2px solid #e0e0e0;
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: #1E88E5;
-    }
-
-    .login-btn {
-      width: 100%;
-      background: #43A047;
-      color: white;
-      padding: 1rem;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.1rem;
-      font-weight: bold;
-      cursor: pointer;
-      transition: transform 0.3s, background 0.3s;
-    }
-
-    .login-btn:hover {
-      transform: translateY(-2px);
-      background: #388E3C;
-    }
-
-    .error {
-      margin-top: 1rem;
-      color: red;
-      text-align: center;
-    }
-
-    .register-link {
-      text-align: center;
-      margin-top: 1.5rem;
-      color: #666;
-    }
-
-    .register-link a {
-      color: #1E88E5;
-      text-decoration: none;
-      font-weight: 600;
-    }
-  </style>
-</head>
-
-<body>
-  <header>
-    <nav>
-      <div class="logo">
-        <span class="logo-icon">🍽️</span>
-        RescueBite
-      </div>
-
-      <ul class="nav-links">
-        <li><a href="/">Home</a></li>
-        <li><a href="#about">About</a></li>
-        <li><a href="/login/">Login</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <div class="login-container">
-    <div class="login-card">
-      <h2>Login</h2>
-      <p>Welcome back! Please login to continue.</p>
-
-      <!-- IMPORTANT: action added and csrf token inside form -->
-      <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" name="email" required>
+                <div class="rb-auth__footer">
+                    Don't have an account? <a href="{% url 'home' %}">Register</a>
+                </div>
+            </div>
         </div>
+    </main>
+{% endblock %}
 
-        <div class="form-group">
-          <label>Password</label>
-          <input type="password" name="password" required>
-        </div>
-
-        <button class="login-btn" type="submit">Login</button>
-      </form>
-
-      <!-- Display Django messages properly -->
-      {% if messages %}
-        {% for message in messages %}
-          <div class="error">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
-
-      <div class="register-link">
-        Don't have an account? <a href="/">Register</a>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+{% block extra_js %}
+    <script src="{% static 'main/js/login.js' %}"></script>
+{% endblock %}

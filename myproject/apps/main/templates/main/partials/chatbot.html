@@ -1,0 +1,30 @@
+<aside class="rb-help" data-rb-chatbot data-endpoint="{% url 'chatbot_message' %}">
+    <button class="rb-help__launcher" type="button" aria-expanded="false" aria-controls="rb-help-panel" data-rb-chat-open>
+        <span aria-hidden="true">✦</span> May I Help You?
+    </button>
+
+    <section class="rb-help__panel" id="rb-help-panel" aria-label="RescueBite help chat" hidden>
+        <header class="rb-help__header">
+            <div>
+                <h2>RescueBite Help</h2>
+                <p style="color:whitesmoke">Ask how to get started</p>
+            </div>
+            <button class="rb-help__close" type="button" aria-label="Close help chat" data-rb-chat-close>×</button>
+        </header>
+        <div class="rb-help__messages" role="log" aria-live="polite" aria-relevant="additions">
+            <p class="rb-help__bubble rb-help__bubble--assistant">Hi! I can explain how donors, NGOs, and volunteers use RescueBite. What would you like to know?</p>
+        </div>
+        <div class="rb-help__quick" aria-label="Suggested questions">
+            <button type="button" data-rb-chat-question="How do I register?">How do I register?</button>
+            <button type="button" data-rb-chat-question="How do I donate food?">How do I donate food?</button>
+            <button type="button" data-rb-chat-question="I am an NGO. How do I claim food?">I am an NGO</button>
+        </div>
+        <form class="rb-help__form" data-rb-chat-form>
+            {% csrf_token %}
+            <label class="rb-visually-hidden" for="rb-help-input">Your question</label>
+            <textarea id="rb-help-input" name="message" rows="2" maxlength="1200" placeholder="Type your question…" required data-rb-chat-input></textarea>
+            <button type="submit" class="rb-btn rb-btn--primary" data-rb-chat-send>Send</button>
+        </form>
+        <p class="rb-help__status" aria-live="polite" data-rb-chat-status></p>
+    </section>
+</aside>

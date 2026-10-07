@@ -1,236 +1,190 @@
+{% extends "main/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Receive Donation | FoodShare</title>
-    
+
+{% block title %}Receive Donation | RescueBite{% endblock %}
+
+{% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
-    
-    <style>
-        body { background-color: #f4f7f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .hero-section { background: linear-gradient(135deg, #198754 0%, #0d6efd 100%); color: white; padding: 40px 0; margin-bottom: 30px; }
-        .food-card { border: none; border-radius: 12px; transition: transform 0.2s; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: 100%; }
-        .food-card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-        .food-img { height: 180px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px; background-color: #e9ecef; }
-        .badge-expiry { position: absolute; top: 10px; right: 10px; }
-        .rating-stars { color: #ffc107; font-size: 1.5rem; cursor: pointer; }
-        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 1060; }
-    </style>
-</head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="{% url 'home' %}">
-            <i class="fas fa-hand-holding-heart me-2"></i>FoodShare
-        </a>
+{% endblock %}
 
-        <div class="ms-auto d-flex align-items-center">
-            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm me-2">
-                <i class="fas fa-home me-1"></i>Home
-            </a>
-            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
-                <i class="fas fa-sign-out-alt me-1"></i>Logout
-            </a>
+{% block content %}
+    <main class="rb-section rb-section--tight">
+        <div class="rb-container">
+
+            <!-- Dashboard header -->
+            <div class="rb-page-head rb-page-head--split">
+                <div>
+                    <p class="rb-page-head__eyebrow">NGO dashboard</p>
+                    <h1>{{ ngo.organization_name }}</h1>
+                    <p>Claim surplus food posted near your registered location and keep it moving.</p>
+                </div>
+                <div class="rb-page-head__aside">
+                    <p class="rb-count-pill">
+                        <span class="rb-visually-hidden">Open donations:</span>
+                        <strong>{{ foods|length }}</strong>
+                        <span>open donation{{ foods|length|pluralize }}</span>
+                    </p>
+                    <a href="{% url 'logout' %}" class="rb-btn rb-btn--outline">
+                        <span aria-hidden="true">↪</span> Logout
+                    </a>
+                </div>
+            </div>
+
+            <!-- The claim request is sent by AJAX and carries the CSRF token in a header.
+     Rendering the token here guarantees it exists on this page instead of
+     relying on a cookie left behind by an earlier form. -->
+{% csrf_token %}
+
+            <div class="rb-food-grid" id="donorList" data-rb-accept-url="{% url 'accept_donation' %}">
+                {% for food in foods %}
+                    <article class="rb-meal-card donor-item" data-id="{{ food.id }}">
+                        <div class="rb-meal-card__media">
+                            {% if food.image %}
+                                <img src="{{ food.image.url }}" loading="lazy" decoding="async"
+                                     alt="{{ food.name }} donated by {{ food.donor.organization_name }}">
+                            {% else %}
+                                <div class="rb-meal-card__placeholder" aria-hidden="true">🍽️</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="rb-meal-card__body">
+                            <p class="rb-meal-card__donor">{{ food.donor.organization_name }}</p>
+                            <p class="rb-meal-card__name">Item: {{ food.name }}</p>
+
+                            <div class="rb-food-card__chips">
+                                <span class="rb-status{% if food.status == 'PENDING' %} rb-status--pending{% elif food.status == 'AVAILABLE' %} rb-status--available{% else %} rb-status--neutral{% endif %}">
+                                    <span class="rb-status__dot" aria-hidden="true"></span>
+                                    {% if food.status == 'PENDING' %}Pickup requested{% else %}Available{% endif %}
+                                </span>
+                                {% if food.is_expired %}
+                                    <span class="rb-chip rb-chip--stale">Past shelf life</span>
+                                {% else %}
+                                    <span class="rb-chip rb-chip--fresh">{{ food.expiry_hours }}h shelf life</span>
+                                {% endif %}
+                                {% if food.priority_expires_at %}
+                                    <span class="rb-chip rb-chip--reserved">Reserved</span>
+                                {% endif %}
+                            </div>
+
+                            <p class="rb-meta">
+                                <span class="rb-meta__item">Quantity: {{ food.food_quantity }}</span>
+                                <span class="rb-meta__item">Posted {{ food.created_at|date:"M d, H:i" }}</span>
+                            </p>
+
+                            {% if food.description %}
+                                <p class="rb-food-card__desc">{{ food.description }}</p>
+                            {% endif %}
+
+                            <div class="rb-meal-card__actions actions d-grid">
+                                <button type="button" class="rb-btn rb-btn--primary rb-btn--block"
+                                        data-rb-claim="{{ food.id }}"
+                                        data-name="{{ food.donor.organization_name }}"
+                                        aria-label="Claim the donation of {{ food.food_quantity }} {{ food.name }} from {{ food.donor.organization_name }}">
+                                    Claim donation
+                                </button>
+                            </div>
+                        </div>
+                    </article>
+                {% empty %}
+                    <div class="rb-empty">
+                        <div class="rb-empty__icon" aria-hidden="true">🔍</div>
+                        <p class="rb-empty__title">No donations available</p>
+                        <p class="rb-mb-0">Nothing is open for pickup right now. New donations appear here as soon as donors post them.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <section class="rb-section rb-section--tight" aria-labelledby="claimedDonationsTitle">
+                <div class="rb-section-head">
+                    <h2 class="rb-section-title rb-mb-0" id="claimedDonationsTitle">Your claimed donations</h2>
+                    <span class="rb-count-pill"><strong>{{ claimed_foods|length }}</strong> claimed</span>
+                </div>
+
+                <div class="rb-food-grid" id="claimedDonations">
+                    {% for food in claimed_foods %}
+                        <article class="rb-meal-card" data-status="{{ food.status }}">
+                            <div class="rb-meal-card__body">
+                                <p class="rb-meal-card__donor">{{ food.donor.organization_name }}</p>
+                                <p class="rb-meal-card__name">Item: {{ food.name }}</p>
+                                <div class="rb-food-card__chips">
+                                    <span class="rb-status{% if food.status == 'ASSIGNED' %} rb-status--assigned{% elif food.status == 'IN_TRANSIT' %} rb-status--in-transit{% elif food.status == 'RECEIVED' %} rb-status--received{% else %} rb-status--neutral{% endif %}">
+                                        <span class="rb-status__dot" aria-hidden="true"></span>
+                                        {{ food.get_status_display }}
+                                    </span>
+                                </div>
+                                <p class="rb-meta">
+                                    <span class="rb-meta__item">Quantity: {{ food.food_quantity }}</span>
+                                    <span class="rb-meta__item">Last updated {{ food.updated_at|date:"M d, H:i" }}</span>
+                                </p>
+                                {% if food.description %}
+                                    <p class="rb-food-card__desc">{{ food.description }}</p>
+                                {% endif %}
+                            </div>
+                        </article>
+                    {% empty %}
+                        <div class="rb-empty">
+                            <p class="rb-empty__title">No claimed donations yet</p>
+                            <p class="rb-mb-0">Donations you claim will appear here with their current status.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
         </div>
-    </div>
-</nav>
+    </main>
 
-<div class="hero-section shadow-sm">
-    <div class="container text-center">
-        <h1 class="display-5 fw-bold text-white">Available Meals Nearby</h1>
-        <p class="lead">Fresh donations ready for pickup in your community.</p>
-    </div>
-</div>
-
-<div class="container mb-5">
-    <div class="row g-4" id="donorList">
-        {% for food in foods %}
-        <div class="col-md-6 col-lg-4 donor-item" data-id="{{ food.id }}">
-            <div class="card food-card">
-                {% if food.image %}
-                    <img src="{{ food.image.url }}" class="card-img-top food-img" alt="{{ food.name }}">
-                {% else %}
-                    <div class="food-img d-flex align-items-center justify-content-center text-muted">
-                        <i class="fas fa-utensils fa-3x"></i>
-                    </div>
-                {% endif %}
-                
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        <h5 class="card-title mb-0 text-primary">{{ food.donor.organization_name }}</h5>
-                    </div>
-                    <p class="card-text mb-1"><strong>Item:</strong> {{ food.name }}</p>
-                    <p class="text-muted small mb-3"><i class="fas fa-boxes me-1"></i> Quantity: {{ food.food_quantity }}</p>
-                    
-                    <div class="actions d-grid">
-                        <button class="btn btn-outline-success btn-sm rounded-pill"
-                                data-name="{{ food.donor.organization_name }}"
-                                data-id="{{ food.id }}"
-                                onclick="confirmReceive(this)">
-                            <i class="fas fa-check-circle me-1"></i> Claim Donation
-                        </button>
+    <!-- Claim confirmation -->
+    <div class="modal fade rb-modal" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header">
+                    <h2 class="rb-modal__title" id="confirmModalTitle">Confirm claim</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <p id="popupMessage" class="rb-mb-0">Do you want to claim this donation?</p>
+                </div>
+                <div class="modal-footer border-0">
+                    <div class="rb-modal__actions">
+                        <button type="button" class="rb-btn rb-btn--ghost" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" id="yesBtn" class="rb-btn rb-btn--primary">Confirm &amp; claim</button>
                     </div>
                 </div>
             </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center py-5">
-            <div class="text-muted">
-                <i class="fas fa-search fa-3x mb-3"></i>
-                No donations available at the moment. Come back later!</p>
-            </div>
-        </div>
-        {% endfor %}
     </div>
-</div>
 
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-light">
-                <h5 class="modal-title">Confirm Claim</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body text-center p-4">
-                <p id="popupMessage" class="fs-5"></p>
-            </div>
-            <div class="modal-footer border-0 justify-content-center">
-                <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="yesBtn" class="btn btn-success px-4">Confirm & Claim</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="reviewModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title">Rate Your Experience</h5>
-            </div>
-            <div class="modal-body p-4 text-center">
-                <div class="rating-stars mb-3">
-                    <i class="far fa-star" data-star="1"></i>
-                    <i class="far fa-star" data-star="2"></i>
-                    <i class="far fa-star" data-star="3"></i>
-                    <i class="far fa-star" data-star="4"></i>
-                    <i class="far fa-star" data-star="5"></i>
+    <!-- Review -->
+    <div class="modal fade rb-modal" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow">
+                <div class="modal-header">
+                    <h2 class="rb-modal__title" id="reviewModalTitle">Rate your experience</h2>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <textarea id="feedback" class="form-control" rows="3" placeholder="How was the food quality? (Optional)"></textarea>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" id="submitReview" class="btn btn-primary w-100">Submit Review</button>
+                <div class="modal-body text-center">
+                    <div class="rb-rating">
+                        <div class="rb-rating__stars rating-stars" role="group" aria-label="Rating out of 5">
+                            <button type="button" class="rb-rating__star rb-star" data-star="1" aria-label="1 star">★</button>
+                            <button type="button" class="rb-rating__star rb-star" data-star="2" aria-label="2 stars">★</button>
+                            <button type="button" class="rb-rating__star rb-star" data-star="3" aria-label="3 stars">★</button>
+                            <button type="button" class="rb-rating__star rb-star" data-star="4" aria-label="4 stars">★</button>
+                            <button type="button" class="rb-rating__star rb-star" data-star="5" aria-label="5 stars">★</button>
+                        </div>
+                        <p class="rb-rating__hint" id="ratingHint">Tap a star to rate the handover. Optional.</p>
+                    </div>
+                    <label class="rb-visually-hidden" for="feedback">Feedback about the food quality</label>
+                    <textarea id="feedback" class="rb-input" rows="3" placeholder="How was the food quality? (Optional)"></textarea>
+                </div>
+                <div class="modal-footer border-0">
+                    <button type="button" id="submitReview" class="rb-btn rb-btn--primary rb-btn--block">Submit review</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endblock %}
 
-<div class="toast-container">
-    <div id="liveToast" class="toast align-items-center text-white bg-dark border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body" id="toastText"></div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    const acceptUrl = "{% url 'accept_donation' %}";
-    let currentFoodId = null;
-    let currentDonorName = '';
-    let rating = 0;
-
-    // Modal Initializations
-    const confirmModal = new bootstrap.Modal(document.getElementById('confirmModal'));
-    const reviewModal = new bootstrap.Modal(document.getElementById('reviewModal'));
-    const toast = new bootstrap.Toast(document.getElementById('liveToast'));
-
-    window.confirmReceive = (btn) => {
-        currentFoodId = btn.dataset.id;
-        currentDonorName = btn.dataset.name;
-        document.getElementById('popupMessage').innerHTML = `Do you want to claim the donation from <br><strong>${currentDonorName}</strong>?`;
-        confirmModal.show();
-    };
-
-    document.getElementById('yesBtn').onclick = async () => {
-        try {
-            const response = await fetch(acceptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type':'application/json',
-                    'X-CSRFToken': getCSRF()
-                },
-                body: JSON.stringify({ food_id: currentFoodId })
-            });
-
-            const data = await response.json();
-            
-            if (data.success) {
-                const li = document.querySelector(`.donor-item[data-id='${currentFoodId}']`);
-                if (li) {
-                    li.querySelector('.actions').innerHTML = 
-                        `<button class="btn btn-primary w-100 rounded-pill" onclick="openReview(${currentFoodId})">
-                            <i class="fas fa-star me-1"></i> Leave Review
-                         </button>`;
-                }
-                showToast("Success! You have claimed the donation.");
-            } else {
-                showToast('Error: ' + (data.error || 'Could not claim'));
-            }
-        } catch (err) {
-            showToast('Network error occurred.');
-        } finally {
-            confirmModal.hide();
-        }
-    };
-
-    window.openReview = (id) => {
-        currentFoodId = id;
-        reviewModal.show();
-    };
-
-    // Star Rating Logic
-    document.querySelectorAll('.rating-stars i').forEach(star => {
-        star.onmouseover = () => updateStars(star.dataset.star);
-        star.onclick = () => { rating = star.dataset.star; };
-        star.onmouseout = () => updateStars(rating);
-    });
-
-    function updateStars(val) {
-        document.querySelectorAll('.rating-stars i').forEach(s => {
-            s.className = s.dataset.star <= val ? 'fas fa-star' : 'far fa-star';
-        });
-    }
-
-    document.getElementById('submitReview').onclick = () => {
-        const item = document.querySelector(`.donor-item[data-id='${currentFoodId}']`);
-        if (item) item.remove();
-        showToast('Thank you for your feedback!');
-        reviewModal.hide();
-        
-        // Reset state
-        rating = 0;
-        document.getElementById('feedback').value = '';
-        updateStars(0);
-    };
-
-    function showToast(msg) {
-        document.getElementById('toastText').innerText = msg;
-        toast.show();
-    }
-
-    function getCSRF() {
-        return document.cookie.split('; ')
-            .find(row => row.startsWith('csrftoken='))
-            ?.split('=')[1];
-    }
-});
-</script>
-</body>
-</html>
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'main/js/receiver.js' %}"></script>
+{% endblock %}

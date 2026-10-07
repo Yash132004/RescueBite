@@ -1,0 +1,302 @@
+/* ==========================================================================
+   RescueBite Design System - Bootstrap bridge
+   --------------------------------------------------------------------------
+   Bootstrap is kept and still does the heavy lifting (grid, modals, toasts,
+   responsive utilities). This file re-points Bootstrap's own custom
+   properties at the RescueBite tokens so that stock Bootstrap components
+   inherit the design system instead of us re-implementing them.
+
+   Loaded AFTER bootstrap.min.css and AFTER tokens.css.
+
+   These rules are harmless on the two pages that do not load Bootstrap
+   (home, login) - the tokens simply have no competing Bootstrap value.
+   ========================================================================== */
+
+:root {
+  /* ---------- Bootstrap body / surface ---------- */
+  --bs-body-bg: var(--rb-background);
+  --bs-body-color: var(--rb-text);
+  --bs-body-font-family: var(--rb-font-sans);
+  --bs-border-color: var(--rb-border);
+  --bs-border-color-translucent: var(--rb-border);
+  --bs-secondary-color: var(--rb-text-muted);
+  --bs-tertiary-color: var(--rb-text-subtle);
+  --bs-emphasis-color: var(--rb-text);
+  --bs-heading-color: var(--rb-text);
+
+  /* ---------- Bootstrap palette -> tokens ---------- */
+  --bs-primary: var(--rb-primary);
+  --bs-primary-rgb: 21, 128, 61;
+  --bs-secondary: var(--rb-secondary);
+  --bs-secondary-rgb: 29, 78, 216;
+  --bs-success: var(--rb-success);
+  --bs-success-rgb: 15, 118, 110;
+  --bs-info: var(--rb-info);
+  --bs-info-rgb: 29, 78, 216;
+  --bs-warning: var(--rb-warning);
+  --bs-warning-rgb: 180, 83, 9;
+  --bs-danger: var(--rb-danger);
+  --bs-danger-rgb: 185, 28, 28;
+  --bs-light: var(--rb-surface-alt);
+  --bs-light-rgb: 248, 250, 249;
+  --bs-dark: var(--rb-surface-inverse);
+  --bs-dark-rgb: 22, 33, 29;
+
+  /* ---------- Bootstrap shape + motion ---------- */
+  --bs-link-color: var(--rb-secondary);
+  --bs-link-hover-color: var(--rb-secondary-strong);
+  --bs-border-radius: var(--rb-radius-sm);
+  --bs-border-radius-sm: var(--rb-radius-xs);
+  --bs-border-radius-lg: var(--rb-radius-md);
+  --bs-border-radius-xl: var(--rb-radius-lg);
+  --bs-focus-ring-color: rgba(29, 78, 216, 0.28);
+  --bs-focus-ring-width: 0.25rem;
+  --bs-font-sans-serif: var(--rb-font-sans);
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  --bs-btn-border-radius: var(--rb-radius-sm);
+  --bs-btn-font-weight: var(--rb-weight-semibold);
+  --bs-btn-padding-y: 0.625rem;
+  --bs-btn-padding-x: var(--rb-space-5);
+  --bs-btn-focus-box-shadow: var(--rb-shadow-focus);
+  --bs-btn-active-shadow: var(--rb-shadow-xs);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rb-space-2);
+  transition: background-color var(--rb-transition),
+    border-color var(--rb-transition), color var(--rb-transition),
+    box-shadow var(--rb-transition), transform var(--rb-transition);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible {
+  outline: none;
+  box-shadow: var(--rb-shadow-focus);
+}
+
+/* Primary = the brand action colour (green) */
+.btn-primary {
+  --bs-btn-bg: var(--rb-primary);
+  --bs-btn-border-color: var(--rb-primary);
+  --bs-btn-hover-bg: var(--rb-primary-strong);
+  --bs-btn-hover-border-color: var(--rb-primary-strong);
+  --bs-btn-active-bg: var(--rb-primary-strong);
+  --bs-btn-active-border-color: var(--rb-primary-strong);
+  --bs-btn-disabled-bg: var(--rb-primary-border);
+  --bs-btn-disabled-border-color: var(--rb-primary-border);
+  --bs-btn-color: var(--rb-primary-contrast);
+  --bs-btn-hover-color: var(--rb-primary-contrast);
+  --bs-btn-active-color: var(--rb-primary-contrast);
+}
+
+.btn-success {
+  --bs-btn-bg: var(--rb-success);
+  --bs-btn-border-color: var(--rb-success);
+  --bs-btn-hover-bg: var(--rb-success-strong);
+  --bs-btn-hover-border-color: var(--rb-success-strong);
+  --bs-btn-active-bg: var(--rb-success-strong);
+  --bs-btn-active-border-color: var(--rb-success-strong);
+  --bs-btn-color: var(--rb-text-inverse);
+  --bs-btn-hover-color: var(--rb-text-inverse);
+  --bs-btn-active-color: var(--rb-text-inverse);
+}
+
+/* Secondary stays neutral so it reads as "Cancel", not as a second CTA. */
+.btn-secondary {
+  --bs-btn-bg: var(--rb-surface-sunken);
+  --bs-btn-border-color: var(--rb-border-strong);
+  --bs-btn-hover-bg: var(--rb-border);
+  --bs-btn-hover-border-color: var(--rb-border-strong);
+  --bs-btn-active-bg: var(--rb-border);
+  --bs-btn-active-border-color: var(--rb-border-strong);
+  --bs-btn-color: var(--rb-text);
+  --bs-btn-hover-color: var(--rb-text);
+  --bs-btn-active-color: var(--rb-text);
+}
+
+.btn-outline-primary {
+  --bs-btn-color: var(--rb-primary);
+  --bs-btn-border-color: var(--rb-primary-border);
+  --bs-btn-hover-bg: var(--rb-primary);
+  --bs-btn-hover-border-color: var(--rb-primary);
+  --bs-btn-hover-color: var(--rb-primary-contrast);
+  --bs-btn-active-bg: var(--rb-primary-strong);
+  --bs-btn-active-border-color: var(--rb-primary-strong);
+  --bs-btn-active-color: var(--rb-primary-contrast);
+}
+
+.btn-outline-secondary {
+  --bs-btn-color: var(--rb-secondary);
+  --bs-btn-border-color: var(--rb-secondary-border);
+  --bs-btn-hover-bg: var(--rb-secondary);
+  --bs-btn-hover-border-color: var(--rb-secondary);
+  --bs-btn-hover-color: var(--rb-secondary-contrast);
+  --bs-btn-active-bg: var(--rb-secondary-strong);
+  --bs-btn-active-border-color: var(--rb-secondary-strong);
+  --bs-btn-active-color: var(--rb-secondary-contrast);
+}
+
+.btn-danger {
+  --bs-btn-bg: var(--rb-danger);
+  --bs-btn-border-color: var(--rb-danger);
+  --bs-btn-hover-bg: var(--rb-danger-strong);
+  --bs-btn-hover-border-color: var(--rb-danger-strong);
+  --bs-btn-active-bg: var(--rb-danger-strong);
+  --bs-btn-active-border-color: var(--rb-danger-strong);
+  --bs-btn-color: var(--rb-text-inverse);
+  --bs-btn-hover-color: var(--rb-text-inverse);
+  --bs-btn-active-color: var(--rb-text-inverse);
+}
+
+.btn-outline-danger {
+  --bs-btn-color: var(--rb-danger);
+  --bs-btn-border-color: var(--rb-danger-border);
+  --bs-btn-hover-bg: var(--rb-danger);
+  --bs-btn-hover-border-color: var(--rb-danger);
+  --bs-btn-hover-color: var(--rb-text-inverse);
+  --bs-btn-active-bg: var(--rb-danger-strong);
+  --bs-btn-active-border-color: var(--rb-danger-strong);
+  --bs-btn-active-color: var(--rb-text-inverse);
+}
+
+/* ---------- Cards ---------- */
+
+.card {
+  --bs-card-border-color: var(--rb-border);
+  --bs-card-border-radius: var(--rb-radius-lg);
+  --bs-card-cap-bg: var(--rb-surface);
+  --bs-card-bg: var(--rb-surface);
+  box-shadow: var(--rb-shadow-sm);
+  transition: box-shadow var(--rb-transition-slow), transform var(--rb-transition-slow),
+    border-color var(--rb-transition);
+}
+
+.card:hover {
+  box-shadow: var(--rb-shadow-md);
+}
+
+/* ---------- Badges ---------- */
+
+.badge {
+  --bs-badge-border-radius: var(--rb-radius-pill);
+  font-weight: var(--rb-weight-semibold);
+  letter-spacing: 0.01em;
+}
+
+/* ---------- Alerts (shared success / warning / error states) ---------- */
+
+.alert {
+  --bs-alert-border-radius: var(--rb-radius-md);
+  --bs-alert-border-width: var(--rb-border-width);
+  box-shadow: var(--rb-shadow-xs);
+}
+
+.alert-success {
+  --bs-alert-color: var(--rb-success-strong);
+  --bs-alert-bg: var(--rb-success-soft);
+  --bs-alert-border-color: var(--rb-success-border);
+}
+
+.alert-danger {
+  --bs-alert-color: var(--rb-danger-strong);
+  --bs-alert-bg: var(--rb-danger-soft);
+  --bs-alert-border-color: var(--rb-danger-border);
+}
+
+.alert-warning {
+  --bs-alert-color: var(--rb-warning-strong);
+  --bs-alert-bg: var(--rb-warning-soft);
+  --bs-alert-border-color: var(--rb-warning-border);
+}
+
+.alert-info {
+  --bs-alert-color: var(--rb-secondary-strong);
+  --bs-alert-bg: var(--rb-secondary-soft);
+  --bs-alert-border-color: var(--rb-secondary-border);
+}
+
+/* ---------- Form controls ---------- */
+
+.form-control,
+.form-select {
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-sm);
+  padding: 0.625rem var(--rb-space-4);
+  color: var(--rb-text);
+  background-color: var(--rb-surface);
+  transition: border-color var(--rb-transition), box-shadow var(--rb-transition);
+}
+
+.form-control::placeholder {
+  color: var(--rb-text-subtle);
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--rb-primary);
+  box-shadow: var(--rb-shadow-focus);
+  outline: none;
+}
+
+.form-check-input {
+  border-color: var(--rb-border-strong);
+}
+
+.form-check-input:checked {
+  background-color: var(--rb-primary);
+  border-color: var(--rb-primary);
+}
+
+.form-check-input:focus {
+  border-color: var(--rb-primary);
+  box-shadow: var(--rb-shadow-focus);
+}
+
+/* Django renders validation errors as .errorlist - keep them on-brand. */
+.errorlist {
+  margin: var(--rb-space-2) 0 0;
+  padding: 0;
+  list-style: none;
+  color: var(--rb-danger);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-medium);
+}
+
+/* ---------- Modal / offcanvas / toast ---------- */
+
+.modal-content {
+  --bs-modal-border-color: var(--rb-border);
+  --bs-modal-border-radius: var(--rb-radius-lg);
+  --bs-modal-box-shadow: var(--rb-shadow-lg);
+}
+
+.modal-header,
+.modal-footer {
+  --bs-modal-header-border-color: var(--rb-border);
+  --bs-modal-footer-border-color: var(--rb-border);
+}
+
+.toast {
+  --bs-toast-border-color: var(--rb-border);
+  --bs-toast-border-radius: var(--rb-radius-md);
+  --bs-toast-box-shadow: var(--rb-shadow-lg);
+}
+
+/* ---------- Table ---------- */
+
+.table {
+  --bs-table-border-color: var(--rb-border);
+  --bs-table-striped-bg: var(--rb-surface-alt);
+  --bs-table-striped-color: var(--rb-text);
+}

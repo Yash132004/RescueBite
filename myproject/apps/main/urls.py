@@ -3,6 +3,7 @@ from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
+from .chatbot_views import chatbot_message
 
 urlpatterns = [
     # Home & Registration (The 'Hub')
@@ -26,6 +27,7 @@ urlpatterns = [
     path('donor/create-food/', views.create_food_donation, name='create_food_donation'),
     path('accept-donation/', views.accept_donation, name='accept_donation'),
     path('volunteer/accept-delivery/', views.volunteer_accept_delivery,    name='volunteer_accept_delivery'),
+    path('help/chat/', chatbot_message, name='chatbot_message'),
     
 ]
 

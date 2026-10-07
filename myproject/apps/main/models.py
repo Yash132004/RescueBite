@@ -1,11 +1,24 @@
+from datetime import timedelta
+
 from django.db import models
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
 from django.contrib.auth.models import User
 
+
+def hash_password_once(password):
+    """Hash a plaintext password, leaving an already-hashed value untouched.
+
+    Shared by the two models that store a hashed password on the profile
+    instead of relying on the auth User.
+    """
+    if password.startswith('pbkdf2_'):
+        return password
+    return make_password(password)
+
+
 # ---------------- VOLUNTEER ----------------
 class Volunteer(models.Model):
-    # In models.py
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
     username = models.CharField(max_length=100, unique=True)
     email = models.EmailField(unique=True)
@@ -19,8 +32,7 @@ class Volunteer(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.password.startswith('pbkdf2_'):  # Only hash if it's plain text
-            self.password = make_password(self.password)
+        self.password = hash_password_once(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -43,7 +55,6 @@ class Donor(models.Model):
         return self.organization_name
 
 
-
 # ---------------- RECEIVER (NGO) ----------------
 class NGO(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
@@ -59,8 +70,7 @@ class NGO(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if not self.password.startswith('pbkdf2_'):
-            self.password = make_password(self.password)
+        self.password = hash_password_once(self.password)
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -102,6 +112,11 @@ class Food(models.Model):
             ("AVAILABLE", "Available for pickup"),
             ("PENDING", "Pickup requested"),
             ("ASSIGNED", "Assigned to NGO/Volunteer"),
+            # Set by main.views.volunteer_accept_delivery when a volunteer
+            # takes the delivery. It was already being written by the app
+            # (and already present in the database) but was missing here, so
+            # the admin/form choices did not list it.
+            ("IN_TRANSIT", "Picked up by volunteer - in transit"),
             ("RECEIVED", "Successfully received"),
             ("EXPIRED", "Expired - not collected"),
             ("CANCELLED", "Cancelled by donor"),
@@ -145,8 +160,5 @@ class Food(models.Model):
         return f"{self.donor.organization_name} - {self.food_quantity} ({self.status})"
 
     def is_expired(self):
-        expiry_time = self.created_at + timezone.timedelta(hours=self.expiry_hours)
+        expiry_time = self.created_at + timedelta(hours=self.expiry_hours)
         return timezone.now() > expiry_time
-
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)

@@ -1,0 +1,816 @@
+/* ==========================================================================
+   RescueBite Design System - Components
+   Shared, reusable UI pieces. Every template composes these instead of
+   declaring its own <style> block.
+   Depends on tokens.css + base.css.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. Site navbar - identical structure on every page
+   ========================================================================== */
+
+.rb-navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--rb-z-navbar);
+  background-color: var(--rb-surface);
+  border-bottom: var(--rb-border-width) solid var(--rb-border);
+  box-shadow: var(--rb-shadow-xs);
+}
+
+.rb-navbar__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rb-space-4);
+  min-height: var(--rb-navbar-height);
+  max-width: var(--rb-container);
+  margin-inline: auto;
+  padding-inline: var(--rb-space-4);
+}
+
+.rb-navbar__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  font-size: var(--rb-font-size-lg);
+  font-weight: var(--rb-weight-bold);
+  color: var(--rb-primary);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.rb-navbar__brand:hover,
+.rb-navbar__brand:focus-visible {
+  color: var(--rb-primary-strong);
+  text-decoration: none;
+}
+
+.rb-navbar__brand-icon {
+  font-size: var(--rb-font-size-xl);
+  line-height: 1;
+}
+
+.rb-navbar__links {
+  display: flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rb-navbar__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  padding: var(--rb-space-2) var(--rb-space-3);
+  border-radius: var(--rb-radius-sm);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text-muted);
+  white-space: nowrap;
+  transition: background-color var(--rb-transition), color var(--rb-transition);
+}
+
+.rb-navbar__link:hover,
+.rb-navbar__link:focus-visible {
+  background-color: var(--rb-primary-soft);
+  color: var(--rb-primary-strong);
+  text-decoration: none;
+}
+
+.rb-navbar__link--active {
+  color: var(--rb-primary);
+  background-color: var(--rb-primary-soft);
+}
+
+.rb-navbar__greeting {
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+}
+
+.rb-navbar__greeting strong {
+  color: var(--rb-text);
+}
+
+/* On small screens collapse to a single scrollable row of links. */
+@media (max-width: 767.98px) {
+  .rb-navbar__inner {
+    flex-wrap: wrap;
+    padding-block: var(--rb-space-3);
+    row-gap: var(--rb-space-2);
+  }
+
+  .rb-navbar__links {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: var(--rb-space-1);
+  }
+}
+
+/* ==========================================================================
+   2. Buttons
+   ========================================================================== */
+
+.rb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rb-space-2);
+  padding: 0.7rem var(--rb-space-6);
+  border: var(--rb-border-width) solid transparent;
+  border-radius: var(--rb-radius-sm);
+  font-family: inherit;
+  font-size: var(--rb-font-size-base);
+  font-weight: var(--rb-weight-semibold);
+  line-height: 1.25;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color var(--rb-transition),
+    border-color var(--rb-transition), color var(--rb-transition),
+    box-shadow var(--rb-transition), transform var(--rb-transition);
+}
+
+.rb-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--rb-shadow-focus);
+}
+
+.rb-btn:hover {
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+.rb-btn:active {
+  transform: translateY(0);
+}
+
+.rb-btn:disabled,
+.rb-btn[aria-disabled="true"] {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.rb-btn--primary {
+  background-color: var(--rb-primary);
+  border-color: var(--rb-primary);
+  color: var(--rb-primary-contrast);
+  box-shadow: var(--rb-shadow-xs);
+}
+
+.rb-btn--primary:hover,
+.rb-btn--primary:focus-visible {
+  background-color: var(--rb-primary-strong);
+  border-color: var(--rb-primary-strong);
+  color: var(--rb-primary-contrast);
+}
+
+.rb-btn--secondary {
+  background-color: var(--rb-secondary);
+  border-color: var(--rb-secondary);
+  color: var(--rb-secondary-contrast);
+  box-shadow: var(--rb-shadow-xs);
+}
+
+.rb-btn--secondary:hover,
+.rb-btn--secondary:focus-visible {
+  background-color: var(--rb-secondary-strong);
+  border-color: var(--rb-secondary-strong);
+  color: var(--rb-secondary-contrast);
+}
+
+.rb-btn--success {
+  background-color: var(--rb-success);
+  border-color: var(--rb-success);
+  color: var(--rb-text-inverse);
+}
+
+.rb-btn--success:hover,
+.rb-btn--success:focus-visible {
+  background-color: var(--rb-success-strong);
+  border-color: var(--rb-success-strong);
+  color: var(--rb-text-inverse);
+}
+
+.rb-btn--danger {
+  background-color: var(--rb-danger);
+  border-color: var(--rb-danger);
+  color: var(--rb-text-inverse);
+}
+
+.rb-btn--danger:hover,
+.rb-btn--danger:focus-visible {
+  background-color: var(--rb-danger-strong);
+  border-color: var(--rb-danger-strong);
+  color: var(--rb-text-inverse);
+}
+
+.rb-btn--outline {
+  background-color: transparent;
+  border-color: var(--rb-primary-border);
+  color: var(--rb-primary);
+}
+
+.rb-btn--outline:hover,
+.rb-btn--outline:focus-visible {
+  background-color: var(--rb-primary-soft);
+  color: var(--rb-primary-strong);
+}
+
+.rb-btn--ghost {
+  background-color: transparent;
+  border-color: var(--rb-border-strong);
+  color: var(--rb-text-muted);
+}
+
+.rb-btn--ghost:hover,
+.rb-btn--ghost:focus-visible {
+  background-color: var(--rb-surface-sunken);
+  color: var(--rb-text);
+}
+
+.rb-btn--block {
+  display: flex;
+  width: 100%;
+}
+
+.rb-btn--lg {
+  padding: 0.9rem var(--rb-space-7);
+  font-size: var(--rb-font-size-md);
+  border-radius: var(--rb-radius-md);
+}
+
+.rb-btn--sm {
+  padding: 0.45rem var(--rb-space-4);
+  font-size: var(--rb-font-size-sm);
+}
+
+/* Pill CTA used on the landing hero. */
+.rb-btn--pill {
+  border-radius: var(--rb-radius-pill);
+}
+
+/* Secondary action on a dark band: outlined white, no fill. */
+.rb-btn--on-dark {
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.75);
+  color: var(--rb-text-inverse);
+}
+
+.rb-btn--on-dark:hover,
+.rb-btn--on-dark:focus-visible {
+  background-color: rgba(255, 255, 255, 0.14);
+  border-color: var(--rb-text-inverse);
+  color: var(--rb-text-inverse);
+}
+
+/* ==========================================================================
+   3. Cards / surfaces
+   ========================================================================== */
+
+.rb-card {
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+  transition: box-shadow var(--rb-transition-slow), transform var(--rb-transition-slow);
+}
+
+.rb-card--padded {
+  padding: var(--rb-space-6);
+}
+
+.rb-card--interactive:hover {
+  box-shadow: var(--rb-shadow-md);
+  transform: translateY(-2px);
+}
+
+.rb-card--accent {
+  border-left: 4px solid var(--rb-primary);
+}
+
+/* ==========================================================================
+   4. Forms
+   ========================================================================== */
+
+.rb-field {
+  margin-bottom: var(--rb-space-5);
+}
+
+.rb-field__label {
+  display: block;
+  margin-bottom: var(--rb-space-2);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+.rb-field__hint {
+  margin-top: var(--rb-space-2);
+  font-size: var(--rb-font-size-xs);
+  color: var(--rb-text-muted);
+}
+
+/* Field-level validation message. Pairs with .rb-field__label + .rb-input. */
+.rb-field__error {
+  margin: var(--rb-space-2) 0 0;
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-danger-strong);
+}
+
+.rb-field__error::before {
+  content: "\26A0\FE0E";
+  margin-right: var(--rb-space-1);
+}
+
+.rb-input {
+  display: block;
+  width: 100%;
+  padding: 0.7rem var(--rb-space-4);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-sm);
+  font-size: var(--rb-font-size-base);
+  color: var(--rb-text);
+  background-color: var(--rb-surface);
+  transition: border-color var(--rb-transition), box-shadow var(--rb-transition);
+}
+
+.rb-input::placeholder {
+  color: var(--rb-text-subtle);
+}
+
+.rb-input:hover {
+  border-color: var(--rb-border-strong);
+}
+
+.rb-input:focus {
+  outline: none;
+  border-color: var(--rb-primary);
+  box-shadow: var(--rb-shadow-focus);
+}
+
+.rb-input:disabled,
+.rb-input[readonly] {
+  background-color: var(--rb-surface-sunken);
+  color: var(--rb-text-muted);
+  cursor: not-allowed;
+}
+
+textarea.rb-input {
+  min-height: 96px;
+  resize: vertical;
+}
+
+select.rb-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%235b6b65'%3E%3Cpath fill-rule='evenodd' d='M1.5 4.5a.5.5 0 0 1 .8-.4L8 9.6l5.7-5.5a.5.5 0 1 1 .8.7l-6.1 5.9a.5.5 0 0 1-.8 0L1.7 5.2a.5.5 0 0 1-.2-.7z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--rb-space-4) center;
+  background-size: 1rem 1rem;
+  padding-right: 2.5rem;
+}
+
+/* Django's form rendering helper is still used on the registration forms.
+   Wrap each .form-group so it inherits the field rhythm. */
+.rb-form-stack > p {
+  margin-bottom: var(--rb-space-5);
+}
+
+.rb-form-stack > p label {
+  display: block;
+  margin-bottom: var(--rb-space-2);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+.rb-form-stack input[type="text"],
+.rb-form-stack input[type="email"],
+.rb-form-stack input[type="password"],
+.rb-form-stack input[type="number"],
+.rb-form-stack input[type="tel"],
+.rb-form-stack input[type="url"],
+.rb-form-stack select,
+.rb-form-stack textarea {
+  display: block;
+  width: 100%;
+  padding: 0.7rem var(--rb-space-4);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-sm);
+  font-size: var(--rb-font-size-base);
+  color: var(--rb-text);
+  background-color: var(--rb-surface);
+  transition: border-color var(--rb-transition), box-shadow var(--rb-transition);
+}
+
+.rb-form-stack input:focus,
+.rb-form-stack select:focus,
+.rb-form-stack textarea:focus {
+  outline: none;
+  border-color: var(--rb-primary);
+  box-shadow: var(--rb-shadow-focus);
+}
+
+/* ==========================================================================
+   5. Status badges & feedback states
+   ========================================================================== */
+
+.rb-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  padding: 0.3rem var(--rb-space-3);
+  border: var(--rb-border-width) solid transparent;
+  border-radius: var(--rb-radius-pill);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.rb-status--available {
+  background-color: var(--rb-primary-soft);
+  border-color: var(--rb-primary-border);
+  color: var(--rb-primary-strong);
+}
+
+.rb-status--pending {
+  background-color: var(--rb-warning-soft);
+  border-color: var(--rb-warning-border);
+  color: var(--rb-warning-strong);
+}
+
+.rb-status--assigned,
+.rb-status--in-transit {
+  background-color: var(--rb-secondary-soft);
+  border-color: var(--rb-secondary-border);
+  color: var(--rb-secondary-strong);
+}
+
+.rb-status--received {
+  background-color: var(--rb-success-soft);
+  border-color: var(--rb-success-border);
+  color: var(--rb-success-strong);
+}
+
+.rb-status--cancelled,
+.rb-status--expired {
+  background-color: var(--rb-danger-soft);
+  border-color: var(--rb-danger-border);
+  color: var(--rb-danger-strong);
+}
+
+.rb-status--neutral {
+  background-color: var(--rb-surface-sunken);
+  border-color: var(--rb-border);
+  color: var(--rb-text-muted);
+}
+
+/* Django messages, rendered by the shared messages partial. */
+.rb-messages {
+  margin-bottom: var(--rb-space-5);
+}
+
+.rb-navbar + .rb-messages {
+  width: 100%;
+  max-width: var(--rb-container);
+  margin-top: var(--rb-space-5);
+  padding-inline: var(--rb-space-4);
+}
+
+.rb-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rb-space-3);
+  padding: var(--rb-space-4) var(--rb-space-5);
+  border: var(--rb-border-width) solid;
+  border-radius: var(--rb-radius-md);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-medium);
+  box-shadow: var(--rb-shadow-xs);
+}
+
+.rb-alert + .rb-alert {
+  margin-top: var(--rb-space-3);
+}
+
+.rb-alert--success {
+  background-color: var(--rb-success-soft);
+  border-color: var(--rb-success-border);
+  color: var(--rb-success-strong);
+}
+
+.rb-alert--error {
+  background-color: var(--rb-danger-soft);
+  border-color: var(--rb-danger-border);
+  color: var(--rb-danger-strong);
+}
+
+.rb-alert--warning {
+  background-color: var(--rb-warning-soft);
+  border-color: var(--rb-warning-border);
+  color: var(--rb-warning-strong);
+}
+
+.rb-alert--info {
+  background-color: var(--rb-secondary-soft);
+  border-color: var(--rb-secondary-border);
+  color: var(--rb-secondary-strong);
+}
+
+/* Inline informational note inside forms/cards. */
+.rb-note {
+  padding: var(--rb-space-3) var(--rb-space-4);
+  border-left: 3px solid var(--rb-secondary-border);
+  border-radius: var(--rb-radius-sm);
+  background-color: var(--rb-secondary-soft);
+  color: var(--rb-secondary-strong);
+  font-size: var(--rb-font-size-sm);
+}
+
+.rb-note--warning {
+  border-left-color: var(--rb-warning-border);
+  background-color: var(--rb-warning-soft);
+  color: var(--rb-warning-strong);
+}
+
+/* Empty state */
+.rb-empty {
+  padding: var(--rb-space-9) var(--rb-space-6);
+  text-align: center;
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) dashed var(--rb-border-strong);
+  border-radius: var(--rb-radius-lg);
+  color: var(--rb-text-muted);
+}
+
+.rb-empty__icon {
+  font-size: var(--rb-font-size-3xl);
+  line-height: 1;
+  margin-bottom: var(--rb-space-3);
+}
+
+.rb-empty__title {
+  margin-bottom: var(--rb-space-2);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+/* ==========================================================================
+   6. Tabs (registration role switcher)
+   ========================================================================== */
+
+.rb-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--rb-space-3);
+  margin-bottom: var(--rb-space-6);
+}
+
+/* Below the tablet breakpoint the three roles scroll sideways instead of
+   wrapping into an uneven stack. */
+@media (max-width: 575.98px) {
+  .rb-tabs {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    margin-inline: calc(-1 * var(--rb-space-4));
+    padding: var(--rb-space-1) var(--rb-space-4) var(--rb-space-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .rb-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .rb-tabs .rb-tab {
+    flex: 0 0 auto;
+  }
+}
+
+.rb-tab {
+  padding: var(--rb-space-3) var(--rb-space-6);
+  border: var(--rb-border-width) solid var(--rb-secondary-border);
+  border-radius: var(--rb-radius-pill);
+  background-color: var(--rb-surface);
+  color: var(--rb-secondary);
+  font-size: var(--rb-font-size-base);
+  font-weight: var(--rb-weight-semibold);
+  cursor: pointer;
+  transition: background-color var(--rb-transition), border-color var(--rb-transition),
+    color var(--rb-transition), box-shadow var(--rb-transition);
+}
+
+.rb-tab:hover {
+  border-color: var(--rb-primary);
+  color: var(--rb-primary);
+  background-color: var(--rb-primary-soft);
+}
+
+.rb-tab:focus-visible {
+  outline: none;
+  box-shadow: var(--rb-shadow-focus);
+}
+
+.rb-tab[aria-selected="true"] {
+  background-color: var(--rb-primary);
+  border-color: var(--rb-primary);
+  color: var(--rb-primary-contrast);
+  box-shadow: var(--rb-shadow-xs);
+}
+
+/* ==========================================================================
+   7. Panels (tabbed content)
+   ========================================================================== */
+
+.rb-panel {
+  display: none;
+}
+
+.rb-panel.is-active {
+  display: block;
+  animation: rb-fade-in-up var(--rb-duration-base) var(--rb-easing) both;
+}
+
+/* ==========================================================================
+   8. Map containers
+   ========================================================================== */
+
+.rb-map {
+  width: 100%;
+  height: 260px;
+  margin-top: var(--rb-space-4);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-md);
+  overflow: hidden;
+  background-color: var(--rb-surface-sunken);
+}
+
+.rb-map--tall {
+  height: 340px;
+}
+
+/* Leaflet routing turn-by-turn panel is noise for a rescue app. */
+.leaflet-routing-container {
+  display: none !important;
+}
+
+/* ==========================================================================
+   9. Star rating (receiver feedback)
+   ========================================================================== */
+
+.rb-stars {
+  display: inline-flex;
+  gap: var(--rb-space-1);
+  font-size: var(--rb-font-size-xl);
+  line-height: 1;
+  color: var(--rb-warning-border);
+  cursor: pointer;
+}
+
+.rb-star {
+  color: var(--rb-border-strong);
+  transition: color var(--rb-transition-fast), transform var(--rb-transition-fast);
+}
+
+.rb-star:hover {
+  transform: scale(1.12);
+}
+
+.rb-star.is-on {
+  color: var(--rb-warning);
+}
+
+/* ==========================================================================
+   10. Toast host
+   ========================================================================== */
+
+.rb-toast-host {
+  position: fixed;
+  right: var(--rb-space-5);
+  bottom: var(--rb-space-5);
+  z-index: var(--rb-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--rb-space-3);
+  pointer-events: none;
+}
+
+.rb-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--rb-space-3);
+  max-width: min(360px, calc(100vw - 2 * var(--rb-space-5)));
+  padding: var(--rb-space-4) var(--rb-space-5);
+  border-radius: var(--rb-radius-md);
+  box-shadow: var(--rb-shadow-lg);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-medium);
+  animation: rb-fade-in-up var(--rb-duration-base) var(--rb-easing) both;
+}
+
+.rb-toast--success {
+  background-color: var(--rb-success-strong);
+  color: var(--rb-text-inverse);
+}
+
+.rb-toast--error {
+  background-color: var(--rb-danger-strong);
+  color: var(--rb-text-inverse);
+}
+
+.rb-toast--info {
+  background-color: var(--rb-secondary-strong);
+  color: var(--rb-text-inverse);
+}
+
+.rb-toast__close {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: var(--rb-font-size-lg);
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.rb-toast__close:hover {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   11. Footer
+   ========================================================================== */
+
+.rb-footer {
+  flex-shrink: 0;
+  margin-top: var(--rb-space-9);
+  padding-block: var(--rb-space-7);
+  background-color: var(--rb-surface-inverse);
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.rb-footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rb-space-5);
+  max-width: var(--rb-container);
+  margin-inline: auto;
+  padding-inline: var(--rb-space-4);
+  font-size: var(--rb-font-size-sm);
+  text-align: center;
+}
+
+@media (min-width: 768px) {
+  .rb-footer__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--rb-space-6);
+    text-align: left;
+  }
+}
+
+.rb-footer p {
+  margin: 0;
+  color: inherit;
+}
+
+.rb-footer strong {
+  color: var(--rb-text-inverse);
+}
+
+.rb-footer a {
+  color: var(--rb-primary-border);
+}
+
+.rb-footer a:hover {
+  color: var(--rb-text-inverse);
+}
+
+.rb-footer__name {
+  font-size: var(--rb-font-size-md);
+  margin-bottom: var(--rb-space-1) !important;
+}
+
+.rb-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--rb-space-2) var(--rb-space-5);
+}
+
+.rb-footer__legal {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--rb-font-size-xs);
+}

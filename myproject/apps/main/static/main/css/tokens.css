@@ -1,0 +1,146 @@
+/* ==========================================================================
+   RescueBite Design System - Tokens
+   --------------------------------------------------------------------------
+   The single source of truth for colour, radius, shadow, spacing, typography
+   and motion. Nothing below this file may hard-code a colour or a magic
+   number that could reasonably be expressed as a token.
+
+   Loaded FIRST on every page; every other stylesheet consumes these vars.
+
+   Colour contrast notes (WCAG AA, 4.5:1 for body text):
+     --rb-primary    #15803d on white = 4.83:1  (white text on it = 4.83:1)
+     --rb-secondary  #1d4ed8 on white = 6.30:1
+     --rb-success    #0f766e on white = 5.36:1
+     --rb-warning    #b45309 on white = 5.02:1
+     --rb-danger     #b91c1c on white = 6.40:1
+     --rb-text-muted #5b6b65 on white = 5.63:1
+   ========================================================================== */
+
+:root {
+  /* ---------- Brand: primary (sustainability / action) ---------- */
+  --rb-primary: #15803d;
+  --rb-primary-strong: #14532d;
+  --rb-primary-soft: #dcfce7;
+  --rb-primary-border: #86efac;
+  --rb-primary-contrast: #ffffff;
+
+  /* ---------- Brand: secondary (information / navigation) ---------- */
+  --rb-secondary: #1d4ed8;
+  --rb-secondary-strong: #1e40af;
+  --rb-secondary-soft: #dbeafe;
+  --rb-secondary-border: #93c5fd;
+  --rb-secondary-contrast: #ffffff;
+
+  /* ---------- Status ---------- */
+  --rb-success: #0f766e;
+  --rb-success-strong: #115e59;
+  --rb-success-soft: #ccfbf1;
+  --rb-success-border: #5eead4;
+
+  --rb-warning: #b45309;
+  --rb-warning-strong: #92400e;
+  --rb-warning-soft: #fef3c7;
+  --rb-warning-border: #fcd34d;
+
+  --rb-danger: #b91c1c;
+  --rb-danger-strong: #991b1b;
+  --rb-danger-soft: #fee2e2;
+  --rb-danger-border: #fca5a5;
+
+  --rb-info: var(--rb-secondary);
+  --rb-info-soft: var(--rb-secondary-soft);
+  --rb-info-border: var(--rb-secondary-border);
+
+  /* ---------- Neutrals ---------- */
+  --rb-background: #f4f7f6;
+  --rb-surface: #ffffff;
+  --rb-surface-alt: #f8faf9;
+  --rb-surface-sunken: #eef2f1;
+  --rb-surface-inverse: #16211d;
+
+  --rb-text: #16211d;
+  --rb-text-muted: #5b6b65;
+  --rb-text-subtle: #7c8a84;
+  --rb-text-inverse: #ffffff;
+
+  --rb-border: #dde5e1;
+  --rb-border-strong: #c3d0cb;
+  --rb-border-focus: var(--rb-secondary);
+
+  --rb-overlay: rgba(22, 33, 29, 0.55);
+
+  /* ---------- Radius ---------- */
+  --rb-radius-xs: 6px;
+  --rb-radius-sm: 8px;
+  --rb-radius-md: 12px;
+  --rb-radius-lg: 16px;
+  --rb-radius-xl: 22px;
+  --rb-radius-pill: 999px;
+
+  /* ---------- Elevation (subtle, low-contrast) ---------- */
+  --rb-shadow-xs: 0 1px 2px rgba(22, 33, 29, 0.05);
+  --rb-shadow-sm: 0 1px 3px rgba(22, 33, 29, 0.06), 0 1px 2px rgba(22, 33, 29, 0.04);
+  --rb-shadow-md: 0 4px 12px rgba(22, 33, 29, 0.07), 0 2px 4px rgba(22, 33, 29, 0.04);
+  --rb-shadow-lg: 0 12px 28px rgba(22, 33, 29, 0.10), 0 4px 8px rgba(22, 33, 29, 0.04);
+  --rb-shadow-focus: 0 0 0 3px rgba(21, 128, 61, 0.22);
+
+  /* ---------- Spacing (4px base) ---------- */
+  --rb-space-0: 0;
+  --rb-space-1: 0.25rem;
+  --rb-space-2: 0.5rem;
+  --rb-space-3: 0.75rem;
+  --rb-space-4: 1rem;
+  --rb-space-5: 1.25rem;
+  --rb-space-6: 1.5rem;
+  --rb-space-7: 2rem;
+  --rb-space-8: 2.5rem;
+  --rb-space-9: 3rem;
+  --rb-space-10: 4rem;
+  --rb-space-11: 5rem;
+  --rb-space-12: 6rem;
+
+  /* ---------- Typography ---------- */
+  --rb-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", sans-serif;
+  --rb-font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  --rb-font-size-xs: 0.75rem;
+  --rb-font-size-sm: 0.875rem;
+  --rb-font-size-base: 1rem;
+  --rb-font-size-md: 1.125rem;
+  --rb-font-size-lg: 1.25rem;
+  --rb-font-size-xl: 1.5rem;
+  --rb-font-size-2xl: 1.875rem;
+  --rb-font-size-3xl: 2.25rem;
+  --rb-font-size-4xl: 2.75rem;
+
+  --rb-line-height-tight: 1.25;
+  --rb-line-height-snug: 1.4;
+  --rb-line-height-base: 1.6;
+
+  --rb-weight-regular: 400;
+  --rb-weight-medium: 500;
+  --rb-weight-semibold: 600;
+  --rb-weight-bold: 700;
+
+  /* ---------- Layout ---------- */
+  --rb-container: 1200px;
+  --rb-container-narrow: 640px;
+  --rb-navbar-height: 64px;
+  --rb-border-width: 1px;
+
+  /* ---------- Motion (subtle + purposeful) ---------- */
+  --rb-duration-fast: 120ms;
+  --rb-duration-base: 180ms;
+  --rb-duration-slow: 280ms;
+  --rb-easing: cubic-bezier(0.4, 0, 0.2, 1);
+  --rb-transition: var(--rb-duration-base) var(--rb-easing);
+  --rb-transition-fast: var(--rb-duration-fast) var(--rb-easing);
+  --rb-transition-slow: var(--rb-duration-slow) var(--rb-easing);
+
+  /* ---------- Z-index scale ---------- */
+  --rb-z-navbar: 1000;
+  --rb-z-dropdown: 1010;
+  --rb-z-modal: 1050;
+  --rb-z-toast: 1080;
+}

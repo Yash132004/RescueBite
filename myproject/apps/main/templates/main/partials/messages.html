@@ -1,0 +1,8 @@
+{% if messages %}
+    <div class="rb-messages">
+        {% for message in messages %}
+            <div class="rb-alert rb-alert--{% if 'error' in message.tags %}error{% elif 'warning' in message.tags %}warning{% elif 'success' in message.tags %}success{% else %}info{% endif %}"
+                 role="alert">{{ message }}</div>
+        {% endfor %}
+    </div>
+{% endif %}

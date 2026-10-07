@@ -10,6 +10,26 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+
+def _load_project_env(env_path):
+    """Load simple KEY=VALUE settings from the local, git-ignored .env file."""
+    if not env_path.is_file():
+        return
+    for raw_line in env_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip()
+        if value[:1] == value[-1:] and value.startswith(("'", '"')):
+            value = value[1:-1]
+        if key:
+            os.environ.setdefault(key, value)
+
+
+_load_project_env(BASE_DIR / ".env")
+
 # Media files (uploads)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

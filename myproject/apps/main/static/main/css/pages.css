@@ -1,0 +1,1555 @@
+/* ==========================================================================
+   RescueBite Design System - Page composition
+   Layout that is specific to a page or a screen, assembled entirely from the
+   shared components and tokens. Keep it thin: if something here looks like a
+   reusable widget it belongs in components.css instead.
+   Depends on tokens.css + base.css + components.css.
+   ========================================================================== */
+
+/* ==========================================================================
+   Landing page
+   ========================================================================== */
+
+.rb-hero {
+  padding-block: var(--rb-space-11) var(--rb-space-10);
+  text-align: center;
+  /* One restrained gradient, brand-derived, rather than a blue wash. */
+  background-image: linear-gradient(
+    160deg,
+    var(--rb-primary-strong) 0%,
+    var(--rb-primary) 55%,
+    #0f5132 100%
+  );
+  color: var(--rb-primary-contrast);
+}
+
+.rb-hero h1 {
+  max-width: 20ch;
+  margin-inline: auto;
+  margin-bottom: var(--rb-space-5);
+  font-size: var(--rb-font-size-3xl);
+  color: var(--rb-primary-contrast);
+}
+
+.rb-hero p {
+  max-width: 62ch;
+  margin: 0 auto var(--rb-space-7);
+  font-size: var(--rb-font-size-md);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.rb-hero .rb-btn--primary {
+  background-color: var(--rb-text-inverse);
+  border-color: var(--rb-text-inverse);
+  color: var(--rb-primary-strong);
+}
+
+.rb-hero .rb-btn--primary:hover,
+.rb-hero .rb-btn--primary:focus-visible {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-color: rgba(255, 255, 255, 0.9);
+  color: var(--rb-primary-strong);
+}
+
+/* Small pill above the headline that frames the section. */
+.rb-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  margin-bottom: var(--rb-space-4);
+  padding: var(--rb-space-1) var(--rb-space-4);
+  border: var(--rb-border-width) solid rgba(255, 255, 255, 0.35);
+  border-radius: var(--rb-radius-pill);
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--rb-primary-contrast);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.rb-hero__lead {
+  max-width: 60ch;
+  margin: 0 auto var(--rb-space-7);
+  font-size: var(--rb-font-size-md);
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.rb-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--rb-space-3);
+}
+
+/* Live counters straight from the database, not marketing copy. */
+.rb-hero__facts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--rb-space-3) var(--rb-space-7);
+  margin: var(--rb-space-8) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rb-hero__fact {
+  font-size: var(--rb-font-size-sm);
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.rb-hero__fact strong {
+  display: block;
+  font-size: var(--rb-font-size-xl);
+  font-weight: var(--rb-weight-bold);
+  line-height: 1.2;
+  color: var(--rb-primary-contrast);
+}
+
+@media (min-width: 768px) {
+  .rb-hero h1 {
+    font-size: var(--rb-font-size-4xl);
+  }
+}
+
+/* How it works: three ordered steps */
+.rb-steps {
+  display: grid;
+  gap: var(--rb-space-5);
+  grid-template-columns: 1fr;
+  margin-top: var(--rb-space-7);
+  counter-reset: rb-step;
+}
+
+@media (min-width: 640px) {
+  .rb-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.rb-step {
+  position: relative;
+  padding: var(--rb-space-6) var(--rb-space-5);
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+}
+
+.rb-step__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: var(--rb-space-4);
+  border-radius: var(--rb-radius-pill);
+  background-color: var(--rb-primary-soft);
+  color: var(--rb-primary-strong);
+  font-size: var(--rb-font-size-md);
+  font-weight: var(--rb-weight-bold);
+}
+
+.rb-step h3 {
+  font-size: var(--rb-font-size-md);
+}
+
+.rb-step p {
+  margin-bottom: 0;
+  font-size: var(--rb-font-size-sm);
+}
+
+/* About / mission */
+.rb-prose-lead {
+  max-width: 76ch;
+  margin: 0 auto var(--rb-space-8);
+  font-size: var(--rb-font-size-md);
+  text-align: center;
+}
+
+.rb-mission-card {
+  height: 100%;
+  padding: var(--rb-space-6);
+  text-align: center;
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-left: 4px solid var(--rb-primary);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+  transition: box-shadow var(--rb-transition-slow), transform var(--rb-transition-slow);
+}
+
+.rb-mission-card:hover {
+  box-shadow: var(--rb-shadow-md);
+  transform: translateY(-2px);
+}
+
+.rb-mission-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: var(--rb-space-4);
+  border-radius: var(--rb-radius-pill);
+  background-color: var(--rb-primary-soft);
+  font-size: var(--rb-font-size-xl);
+  line-height: 1;
+}
+
+.rb-mission-card h3 {
+  font-size: var(--rb-font-size-md);
+  color: var(--rb-primary-strong);
+}
+
+.rb-mission-card p {
+  margin-bottom: 0;
+  font-size: var(--rb-font-size-sm);
+}
+
+/* Impact band */
+.rb-impact {
+  padding-block: var(--rb-space-9);
+  text-align: center;
+  background-color: var(--rb-primary-strong);
+  color: var(--rb-primary-contrast);
+}
+
+.rb-impact h2 {
+  color: var(--rb-primary-contrast);
+}
+
+.rb-impact__lead {
+  max-width: 62ch;
+  margin: 0 auto var(--rb-space-8);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.rb-impact__label {
+  margin: 0 0 var(--rb-space-4);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* Live figures read straight from the Food table. */
+.rb-impact__live {
+  margin-bottom: var(--rb-space-9);
+}
+
+.rb-impact__live .rb-stat__value {
+  font-size: var(--rb-font-size-4xl);
+}
+
+/*
+ * The four large figures are placeholder marketing copy carried over from the
+ * original page. They are labelled as targets so they are never mistaken for
+ * database totals.
+ */
+.rb-impact__targets {
+  padding-top: var(--rb-space-7);
+  border-top: var(--rb-border-width) solid rgba(255, 255, 255, 0.22);
+}
+
+.rb-stat {
+  padding: var(--rb-space-5);
+  background-color: rgba(255, 255, 255, 0.08);
+  border: var(--rb-border-width) solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--rb-radius-lg);
+}
+
+.rb-stat__value {
+  margin: 0 0 var(--rb-space-1);
+  font-size: var(--rb-font-size-3xl);
+  font-weight: var(--rb-weight-bold);
+  line-height: 1.1;
+  color: var(--rb-primary-contrast);
+}
+
+.rb-stat__label {
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* Registration forms */
+.rb-register {
+  background-color: var(--rb-surface-alt);
+}
+
+.rb-register__panel {
+  max-width: 640px;
+  margin-inline: auto;
+  padding: var(--rb-space-7);
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-xl);
+  box-shadow: var(--rb-shadow-md);
+}
+
+.rb-register__header {
+  margin-bottom: var(--rb-space-6);
+  text-align: center;
+}
+
+.rb-register__header h3 {
+  margin-bottom: var(--rb-space-2);
+  color: var(--rb-primary-strong);
+}
+
+.rb-register__header p {
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+}
+
+/* What a given role actually does in the app. */
+.rb-role-list {
+  margin: 0 0 var(--rb-space-6);
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.rb-role-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--rb-space-3);
+  padding: var(--rb-space-2) 0;
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+}
+
+.rb-role-list li::before {
+  content: "\2713";
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border-radius: var(--rb-radius-pill);
+  background-color: var(--rb-primary-soft);
+  color: var(--rb-primary-strong);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-bold);
+}
+
+/* ==========================================================================
+   Login page
+   ========================================================================== */
+
+.rb-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-block: var(--rb-space-9);
+}
+
+.rb-auth__card {
+  width: 100%;
+  max-width: 440px;
+  padding: var(--rb-space-7);
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-xl);
+  box-shadow: var(--rb-shadow-md);
+}
+
+.rb-auth__header {
+  margin-bottom: var(--rb-space-6);
+  text-align: center;
+}
+
+.rb-auth__header h2 {
+  margin-bottom: var(--rb-space-2);
+  color: var(--rb-primary-strong);
+}
+
+.rb-auth__header p {
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+}
+
+.rb-auth__footer {
+  margin-top: var(--rb-space-6);
+  padding-top: var(--rb-space-5);
+  border-top: var(--rb-border-width) solid var(--rb-border);
+  text-align: center;
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+}
+
+/* ==========================================================================
+   Dashboard shell (donor / receiver / volunteer)
+   ========================================================================== */
+
+.rb-page-head {
+  margin-bottom: var(--rb-space-7);
+}
+
+.rb-page-head__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  margin-bottom: var(--rb-space-2);
+  padding: var(--rb-space-1) var(--rb-space-3);
+  border-radius: var(--rb-radius-pill);
+  background-color: var(--rb-secondary-soft);
+  color: var(--rb-secondary-strong);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.rb-page-head h1 {
+  margin-bottom: var(--rb-space-2);
+}
+
+.rb-page-head p {
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+}
+
+/* Sticky page head band used on the receiver + volunteer screens. */
+.rb-band {
+  padding-block: var(--rb-space-7);
+  margin-bottom: var(--rb-space-7);
+  background-image: linear-gradient(
+    120deg,
+    var(--rb-primary-strong) 0%,
+    var(--rb-primary) 70%,
+    var(--rb-secondary) 160%
+  );
+  color: var(--rb-primary-contrast);
+  text-align: center;
+}
+
+.rb-band h1 {
+  margin-bottom: var(--rb-space-2);
+  color: var(--rb-primary-contrast);
+  font-size: var(--rb-font-size-2xl);
+}
+
+.rb-band p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ---------- Donor: donation cards ---------- */
+
+.rb-food-card {
+  height: 100%;
+  padding: var(--rb-space-5);
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+  transition: box-shadow var(--rb-transition-slow), border-color var(--rb-transition);
+}
+
+.rb-food-card:hover {
+  box-shadow: var(--rb-shadow-md);
+  border-color: var(--rb-primary-border);
+}
+
+.rb-food-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--rb-space-3);
+}
+
+.rb-food-card__name {
+  margin: 0 0 var(--rb-space-1);
+  font-size: var(--rb-font-size-md);
+  color: var(--rb-text);
+}
+
+.rb-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rb-space-1) var(--rb-space-4);
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+}
+
+.rb-meta__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+}
+
+.rb-claim-panel {
+  margin-top: var(--rb-space-4);
+  padding: var(--rb-space-4);
+  background-color: var(--rb-surface-alt);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-md);
+}
+
+.rb-claim-panel__title {
+  margin: 0 0 var(--rb-space-1);
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text);
+}
+
+.rb-searching {
+  margin-top: var(--rb-space-4);
+  padding: var(--rb-space-4);
+  border: var(--rb-border-width) dashed var(--rb-border-strong);
+  border-radius: var(--rb-radius-md);
+  text-align: center;
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+}
+
+/* Spinner used by the "searching for an NGO" placeholder. */
+.rb-spinner {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  margin-right: var(--rb-space-2);
+  vertical-align: -0.125em;
+  border: 2px solid var(--rb-primary-border);
+  border-top-color: var(--rb-primary);
+  border-radius: 50%;
+  animation: rb-spin 700ms linear infinite;
+}
+
+@keyframes rb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Impact tiles (donor sidebar) ---------- */
+
+.rb-tile {
+  padding: var(--rb-space-5);
+  border-radius: var(--rb-radius-lg);
+  color: var(--rb-text-inverse);
+  text-align: center;
+}
+
+.rb-tile--primary {
+  background-color: var(--rb-primary);
+}
+
+.rb-tile--dark {
+  background-color: var(--rb-surface-inverse);
+}
+
+.rb-tile--secondary {
+  background-color: var(--rb-secondary);
+}
+
+.rb-tile__label {
+  margin: 0 0 var(--rb-space-1);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  opacity: 0.88;
+}
+
+.rb-tile__value {
+  margin: 0;
+  font-size: var(--rb-font-size-2xl);
+  font-weight: var(--rb-weight-bold);
+  line-height: 1.1;
+}
+
+/* ---------- Receiver: donation card grid ---------- */
+
+.rb-meal-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+  transition: box-shadow var(--rb-transition-slow), transform var(--rb-transition-slow);
+}
+
+.rb-meal-card:hover {
+  box-shadow: var(--rb-shadow-md);
+  transform: translateY(-3px);
+}
+
+.rb-meal-card__media {
+  position: relative;
+  height: 170px;
+  background-color: var(--rb-surface-sunken);
+  border-bottom: var(--rb-border-width) solid var(--rb-border);
+}
+
+.rb-meal-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rb-meal-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: var(--rb-font-size-3xl);
+  color: var(--rb-border-strong);
+}
+
+.rb-meal-card__body {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  gap: var(--rb-space-2);
+  padding: var(--rb-space-5);
+}
+
+.rb-meal-card__donor {
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-bold);
+  color: var(--rb-secondary);
+}
+
+.rb-meal-card__name {
+  margin: 0;
+  font-size: var(--rb-font-size-base);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+.rb-meal-card__actions {
+  margin-top: auto;
+  padding-top: var(--rb-space-3);
+}
+
+/* ---------- Volunteer: delivery cards ---------- */
+
+.rb-task-card {
+  height: 100%;
+  padding: var(--rb-space-5);
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+  transition: box-shadow var(--rb-transition-slow), transform var(--rb-transition-slow);
+}
+
+.rb-task-card:hover {
+  box-shadow: var(--rb-shadow-md);
+  transform: translateY(-2px);
+}
+
+.rb-task-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rb-space-3);
+  margin-bottom: var(--rb-space-4);
+}
+
+.rb-task-card__ref {
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-bold);
+  color: var(--rb-primary);
+}
+
+.rb-stop {
+  padding: var(--rb-space-3) 0;
+  border-top: var(--rb-border-width) solid var(--rb-border);
+}
+
+.rb-stop + .rb-stop {
+  margin-top: var(--rb-space-3);
+}
+
+.rb-stop__label {
+  margin: 0 0 var(--rb-space-1);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--rb-text-subtle);
+}
+
+.rb-stop__name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rb-space-3);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+.rb-map-card {
+  overflow: hidden;
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+}
+
+.rb-map-card__head {
+  padding: var(--rb-space-3) var(--rb-space-5);
+  border-bottom: var(--rb-border-width) solid var(--rb-border);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+.rb-map-card .rb-map {
+  margin-top: 0;
+  border: 0;
+  border-radius: 0 0 var(--rb-radius-lg) var(--rb-radius-lg);
+}
+
+/* ==========================================================================
+   Donor dashboard
+   ========================================================================== */
+
+/* Header row: title on the left, actions on the right, wraps on small screens. */
+.rb-dash-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--rb-space-4);
+  margin-bottom: var(--rb-space-6);
+}
+
+.rb-dash-head .rb-page-head {
+  margin-bottom: 0;
+}
+
+.rb-dash-head__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rb-space-3);
+}
+
+/*
+ * Light stat cards. Deliberately not .rb-stat: that one is built for the dark
+ * impact band on the landing page.
+ */
+.rb-panel-stats {
+  display: grid;
+  gap: var(--rb-space-4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+  margin-bottom: var(--rb-space-7);
+}
+
+.rb-panel-stat {
+  display: flex;
+  align-items: center;
+  gap: var(--rb-space-4);
+  padding: var(--rb-space-5);
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+}
+
+.rb-panel-stat__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 46px;
+  height: 46px;
+  border-radius: var(--rb-radius-md);
+  background-color: var(--rb-primary-soft);
+  color: var(--rb-primary-strong);
+  font-size: var(--rb-font-size-md);
+}
+
+.rb-panel-stat--accent .rb-panel-stat__icon {
+  background-color: var(--rb-secondary-soft);
+  color: var(--rb-secondary-strong);
+}
+
+.rb-panel-stat--neutral .rb-panel-stat__icon {
+  background-color: var(--rb-surface-sunken);
+  color: var(--rb-text-muted);
+}
+
+.rb-panel-stat__label {
+  margin: 0 0 var(--rb-space-1);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--rb-text-muted);
+}
+
+.rb-panel-stat__value {
+  margin: 0;
+  font-size: var(--rb-font-size-2xl);
+  font-weight: var(--rb-weight-bold);
+  line-height: 1.1;
+  color: var(--rb-text);
+}
+
+.rb-panel-stat__hint {
+  margin: var(--rb-space-1) 0 0;
+  font-size: var(--rb-font-size-xs);
+  color: var(--rb-text-muted);
+}
+
+/* Donation status cards */
+.rb-donation-list {
+  display: grid;
+  gap: var(--rb-space-5);
+}
+
+.rb-donation-card {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background-color: var(--rb-surface);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-sm);
+}
+
+.rb-donation-card__media {
+  height: 190px;
+  background-color: var(--rb-surface-sunken);
+  border-bottom: var(--rb-border-width) solid var(--rb-border);
+}
+
+.rb-donation-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.rb-donation-card__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: var(--rb-font-size-3xl);
+  color: var(--rb-border-strong);
+}
+
+.rb-donation-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--rb-space-3);
+  padding: var(--rb-space-5);
+}
+
+.rb-donation-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--rb-space-3);
+}
+
+.rb-donation-card__name {
+  margin: 0;
+  font-size: var(--rb-font-size-md);
+  color: var(--rb-text);
+}
+
+/* Small leading dot so the badge colour is not the only signal. */
+.rb-status__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--rb-radius-pill);
+  background-color: currentColor;
+}
+
+.rb-donation-card__facts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--rb-space-2);
+}
+
+.rb-donation-card__fact {
+  display: flex;
+  align-items: baseline;
+  gap: var(--rb-space-2);
+  font-size: var(--rb-font-size-sm);
+}
+
+.rb-donation-card__fact dt {
+  flex: 0 0 40%;
+  margin: 0;
+  font-weight: var(--rb-weight-medium);
+  color: var(--rb-text-muted);
+}
+
+.rb-donation-card__fact dd {
+  margin: 0;
+  color: var(--rb-text);
+}
+
+.rb-donation-card__map {
+  margin: 0 var(--rb-space-5) var(--rb-space-5);
+}
+
+.rb-donation-card__map .rb-map {
+  margin-top: 0;
+}
+
+/* Create-donation card */
+.rb-donation-form__row {
+  display: grid;
+  gap: var(--rb-space-4);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 480px) {
+  .rb-donation-form__row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* File input styled to match .rb-input, plus an optional preview. */
+.rb-file {
+  position: relative;
+}
+
+.rb-file__preview {
+  display: none;
+  margin-top: var(--rb-space-3);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-md);
+  overflow: hidden;
+}
+
+.rb-file__preview.is-visible {
+  display: block;
+}
+
+.rb-file__preview img {
+  display: block;
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+/* ==========================================================================
+   NGO / receiver dashboard
+   ========================================================================== */
+
+.rb-page-head--split {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--rb-space-4);
+}
+
+.rb-page-head--split .rb-page-head {
+  margin-bottom: 0;
+}
+
+.rb-page-head__aside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--rb-space-3);
+}
+
+.rb-count-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  padding: var(--rb-space-2) var(--rb-space-4);
+  background-color: var(--rb-primary-soft);
+  border: var(--rb-border-width) solid var(--rb-primary-border);
+  border-radius: var(--rb-radius-pill);
+  color: var(--rb-primary-strong);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+}
+
+/* Auto-fit grid replaces the Bootstrap row/col wrapper for the food list. */
+.rb-food-grid {
+  display: grid;
+  gap: var(--rb-space-5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+}
+
+/* Soft pill used for shelf life / reservation notes on a card. */
+.rb-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-1);
+  padding: 0.2rem var(--rb-space-3);
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-pill);
+  background-color: var(--rb-surface-alt);
+  color: var(--rb-text-muted);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  white-space: nowrap;
+}
+
+.rb-chip--fresh {
+  background-color: var(--rb-success-soft);
+  border-color: var(--rb-success-border);
+  color: var(--rb-success-strong);
+}
+
+.rb-chip--stale {
+  background-color: var(--rb-danger-soft);
+  border-color: var(--rb-danger-border);
+  color: var(--rb-danger-strong);
+}
+
+.rb-chip--reserved {
+  background-color: var(--rb-secondary-soft);
+  border-color: var(--rb-secondary-border);
+  color: var(--rb-secondary-strong);
+}
+
+.rb-food-card__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rb-space-2);
+}
+
+.rb-food-card__desc {
+  margin: 0;
+  padding: var(--rb-space-3);
+  background-color: var(--rb-surface-alt);
+  border-radius: var(--rb-radius-sm);
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+}
+
+/* Confirmation + review modals: Bootstrap provides the behaviour, the design
+   system provides the surface. */
+.rb-modal .modal-content {
+  border: var(--rb-border-width) solid var(--rb-border);
+  border-radius: var(--rb-radius-lg);
+  box-shadow: var(--rb-shadow-lg);
+  overflow: hidden;
+}
+
+.rb-modal .modal-header,
+.rb-modal .modal-footer {
+  border-color: var(--rb-border);
+  padding: var(--rb-space-5);
+}
+
+.rb-modal .modal-body {
+  padding: var(--rb-space-6);
+}
+
+.rb-modal__title {
+  margin: 0;
+  font-size: var(--rb-font-size-md);
+  font-weight: var(--rb-weight-bold);
+  color: var(--rb-text);
+}
+
+.rb-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--rb-space-3);
+}
+
+.rb-confirm__donor {
+  display: block;
+  margin-top: var(--rb-space-2);
+  font-size: var(--rb-font-size-md);
+  color: var(--rb-text);
+}
+
+/* Rating stars as a keyboard-operable radio group. */
+.rb-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--rb-space-2);
+  margin-bottom: var(--rb-space-5);
+}
+
+.rb-rating__stars {
+  display: inline-flex;
+  gap: var(--rb-space-2);
+  font-size: var(--rb-font-size-2xl);
+  line-height: 1;
+}
+
+.rb-rating__star {
+  padding: var(--rb-space-1);
+  border: 0;
+  background: transparent;
+  color: var(--rb-border-strong);
+  cursor: pointer;
+  transition: color var(--rb-transition-fast), transform var(--rb-transition-fast);
+}
+
+.rb-rating__star:hover {
+  transform: scale(1.12);
+}
+
+.rb-rating__star.is-on {
+  color: var(--rb-warning);
+}
+
+.rb-rating__star:focus-visible {
+  outline: var(--rb-border-width) solid var(--rb-primary);
+  outline-offset: 2px;
+  border-radius: var(--rb-radius-sm);
+}
+
+.rb-rating__hint {
+  font-size: var(--rb-font-size-xs);
+  color: var(--rb-text-muted);
+}
+/* ------------------------------------------------------------------
+   Volunteer dashboard
+   Composed from the shared components (rb-panel-stats, rb-task-card,
+   rb-stop, rb-chip, rb-status, rb-empty) plus the volunteer-only pieces:
+   the route/map card chrome and the pickup-to-destination connector.
+   ------------------------------------------------------------------ */
+
+/* --- route / map card --- */
+.rb-route-card {
+  margin-bottom: var(--rb-space-7);
+}
+
+.rb-route-card__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rb-space-3);
+  padding: var(--rb-space-4) var(--rb-space-5);
+  border-bottom: var(--rb-border-width) solid var(--rb-border);
+}
+
+.rb-route-card__title {
+  display: flex;
+  align-items: center;
+  gap: var(--rb-space-3);
+  margin: 0;
+  font-size: var(--rb-font-size-base);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+.rb-route-card__title .rb-icon {
+  color: var(--rb-primary);
+}
+
+.rb-map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rb-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rb-map-legend__item {
+  display: flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text-muted);
+}
+
+.rb-map-legend__dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--rb-surface);
+  box-shadow: 0 0 0 1px var(--rb-border-strong);
+}
+
+.rb-map-legend__dot--pickup {
+  background-color: var(--rb-secondary);
+}
+
+.rb-map-legend__dot--drop {
+  background-color: var(--rb-primary);
+}
+
+/* The map is overlaid by a loading / fallback notice that JS removes once
+   Leaflet has initialised (or that stays if Leaflet never arrives). */
+.rb-map-frame {
+  position: relative;
+  background-color: var(--rb-surface-sunken);
+}
+
+.rb-map-frame .rb-map {
+  margin-top: 0;
+  border: 0;
+  border-radius: 0 0 var(--rb-radius-lg) var(--rb-radius-lg);
+}
+
+.rb-map-notice {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rb-space-3);
+  padding: var(--rb-space-6);
+  text-align: center;
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+  background-color: var(--rb-surface-sunken);
+}
+
+.rb-map-notice[hidden] {
+  display: none;
+}
+
+.rb-map-notice__title {
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+}
+
+/* --- delivery cards --- */
+.rb-delivery-grid {
+  display: grid;
+  gap: var(--rb-space-5);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  margin-bottom: var(--rb-space-7);
+}
+
+.rb-delivery-grid:empty {
+  display: none;
+}
+
+.rb-delivery-card__status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+}
+
+.rb-delivery-card__name {
+  margin: 0 0 var(--rb-space-2);
+  font-size: var(--rb-font-size-lg);
+  font-weight: var(--rb-weight-bold);
+  color: var(--rb-text);
+}
+
+.rb-delivery-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--rb-space-2);
+  margin: 0 0 var(--rb-space-3);
+}
+
+.rb-delivery-card__desc {
+  margin: 0 0 var(--rb-space-4);
+  font-size: var(--rb-font-size-sm);
+  color: var(--rb-text-muted);
+}
+
+.rb-delivery-card__actions {
+  margin-top: auto;
+  padding-top: var(--rb-space-4);
+  border-top: var(--rb-border-width) solid var(--rb-border);
+}
+
+.rb-delivery-card__actions .rb-btn {
+  min-height: 44px;
+}
+
+/* --- pickup to destination connector --- */
+.rb-route {
+  margin: var(--rb-space-2) 0 var(--rb-space-4);
+  padding: var(--rb-space-4) var(--rb-space-4) var(--rb-space-4) var(--rb-space-5);
+  border-radius: var(--rb-radius-md);
+  background-color: var(--rb-surface-alt);
+}
+
+.rb-route__leg {
+  display: flex;
+  gap: var(--rb-space-3);
+}
+
+.rb-route__leg--drop {
+  margin-top: var(--rb-space-3);
+}
+
+.rb-route__marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 0 0 auto;
+  width: 22px;
+}
+
+.rb-route__dot {
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  border: 2px solid var(--rb-surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--rb-border-strong);
+}
+
+.rb-route__dot--pickup {
+  background-color: var(--rb-secondary);
+  box-shadow: 0 0 0 2px var(--rb-secondary-border);
+}
+
+.rb-route__dot--drop {
+  background-color: var(--rb-primary);
+  box-shadow: 0 0 0 2px var(--rb-primary-border);
+}
+
+.rb-route__line {
+  flex: 1 1 auto;
+  width: 2px;
+  min-height: 18px;
+  margin-top: 2px;
+  background-image: linear-gradient(to bottom, var(--rb-border-strong) 55%, transparent 55%);
+  background-size: 2px 8px;
+  background-repeat: repeat;
+}
+
+.rb-route__body {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.rb-route__label {
+  margin: 0 0 2px;
+  font-size: var(--rb-font-size-xs);
+  font-weight: var(--rb-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--rb-text-subtle);
+}
+
+.rb-route__name {
+  margin: 0;
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text);
+  overflow-wrap: anywhere;
+}
+
+.rb-route__coords {
+  margin: 2px 0 0;
+  font-size: var(--rb-font-size-xs);
+  color: var(--rb-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- summary counters that JS keeps in step with accepting --- */
+.rb-panel-stat__value[data-rb-stat] {
+  transition: color var(--rb-transition);
+}
+
+/* --- responsive --- */
+@media (max-width: 768px) {
+  .rb-route-card__head {
+    padding: var(--rb-space-4);
+  }
+
+  .rb-delivery-grid {
+    gap: var(--rb-space-4);
+  }
+
+  .rb-delivery-card__actions .rb-btn {
+    width: 100%;
+  }
+
+  .rb-map-frame .rb-map,
+  .rb-map--tall {
+    height: 260px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rb-map-legend {
+    gap: var(--rb-space-3);
+  }
+
+  .rb-delivery-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Section heading with a trailing counter, used by the dashboard list headers. */
+.rb-section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--rb-space-3);
+  margin-bottom: var(--rb-space-4);
+}
+
+/* ------------------------------------------------------------------
+   Login screen
+   Extends the shared .rb-auth card with the brand lockup, a password
+   reveal control, a clear action and the rejected-credentials state.
+   ------------------------------------------------------------------ */
+
+.rb-auth__back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--rb-space-2);
+  margin-bottom: var(--rb-space-4);
+  font-size: var(--rb-font-size-sm);
+  font-weight: var(--rb-weight-semibold);
+  color: var(--rb-text-muted);
+  text-decoration: none;
+}
+
+.rb-auth__back:hover,
+.rb-auth__back:focus-visible {
+  color: var(--rb-primary);
+}
+
+.rb-auth__back svg {
+  width: 16px;
+  height: 16px;
+}
+
+.rb-auth__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--rb-space-3);
+  margin-bottom: var(--rb-space-5);
+}
+
+.rb-auth__brand-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex: 0 0 auto;
+  border-radius: var(--rb-radius-md);
+  background-color: var(--rb-primary-soft);
+  font-size: var(--rb-font-size-lg);
+  line-height: 1;
+}
+
+.rb-auth__brand-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.rb-auth__brand-name {
+  font-size: var(--rb-font-size-lg);
+  font-weight: var(--rb-weight-bold);
+  color: var(--rb-text);
+}
+
+.rb-auth__brand-tag {
+  font-size: var(--rb-font-size-xs);
+  color: var(--rb-text-muted);
+}
+
+/* Input with a trailing control (the password reveal button). */
+.rb-field__wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.rb-input--trailing {
+  padding-right: 3rem;
+}
+
+.rb-reveal {
+  position: absolute;
+  right: 0.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--rb-radius-sm);
+  background-color: transparent;
+  color: var(--rb-text-muted);
+  cursor: pointer;
+  transition: background-color var(--rb-transition), color var(--rb-transition);
+}
+
+.rb-reveal:hover {
+  background-color: var(--rb-surface-sunken);
+  color: var(--rb-text);
+}
+
+.rb-reveal:focus-visible {
+  outline: var(--rb-border-width) solid var(--rb-primary);
+  outline-offset: 1px;
+}
+
+.rb-reveal svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rb-auth__actions {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--rb-space-3);
+}
+
+.rb-auth__actions .rb-btn {
+  justify-content: center;
+}
+
+/* Rejected credentials. The shared messages partial renders .rb-alert--error
+   above the form; :has() tints the card so the failure is unmistakable.
+   Browsers without :has() still show the red alert exactly as before. */
+.rb-auth__card:has(.rb-alert--error) {
+  border-color: var(--rb-danger-border);
+  box-shadow: var(--rb-shadow-md), 0 0 0 4px var(--rb-danger-soft);
+}
+
+.rb-auth__card:has(.rb-alert--error) .rb-auth__header h2 {
+  color: var(--rb-danger-strong);
+}
+
+@media (max-width: 480px) {
+  .rb-auth {
+    padding-block: var(--rb-space-6);
+  }
+
+  .rb-auth__card {
+    padding: var(--rb-space-5);
+  }
+
+  .rb-auth__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rb-auth .rb-auth__brand-name {
+  margin: 0;
+  font-size: var(--rb-font-size-lg);
+  font-weight: var(--rb-weight-bold);
+  color: var(--rb-text);
+}

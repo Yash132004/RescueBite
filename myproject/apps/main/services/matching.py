@@ -1,44 +1,57 @@
+"""Geo-matching helpers shared by the views.
+
+The implementation of :func:`calculate_distance` was previously inlined in
+``apps.main.views``. It lives here so that distance maths has a single home;
+the formula and its inputs/outputs are unchanged.
+"""
 import math
+
 from ..models import NGO
 
-def haversine(lat1, lon1, lat2, lon2):
-    R = 6371  # Earth radius in km
+EARTH_RADIUS_KM = 6371.0
 
-    dlat = math.radians(lat2 - lat1)
-    dlon = math.radians(lon2 - lon1)
 
-    a = (
-        math.sin(dlat / 2) ** 2 +
-        math.cos(math.radians(lat1)) *
-        math.cos(math.radians(lat2)) *
-        math.sin(dlon / 2) ** 2
-    )
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """Great-circle distance in km between two points.
+
+    Arguments are coerced with ``float()`` so that ``Decimal`` model fields and
+    string query values are both accepted. Returns a float.
+    """
+    phi1, phi2 = math.radians(float(lat1)), math.radians(float(lat2))
+    dphi = math.radians(float(lat2) - float(lat1))
+    dlambda = math.radians(float(lon2) - float(lon1))
+
+    a = math.sin(dphi / 2.0) ** 2 + \
+        math.cos(phi1) * math.cos(phi2) * \
+        math.sin(dlambda / 2.0) ** 2
 
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-    return R * c
+    return EARTH_RADIUS_KM * c
+
+
+def haversine(lat1, lon1, lat2, lon2):
+    """Backward-compatible name for the great-circle distance helper."""
+    return calculate_distance(lat1, lon1, lat2, lon2)
 
 
 def find_nearest_receiver(donor):
-    """
-    donor: Donor model instance with latitude, longitude
-    returns: nearest Receiver instance or None
-    """
+    """Return the nearest NGO and its distance from a donor.
 
-    receivers = NGO.objects.all()
-
+    The NGO claim workflow remains manual; this helper is kept for existing
+    callers that use the matching service directly.
+    """
     nearest = None
-    min_distance = float("inf")
+    minimum_distance = float('inf')
 
-    for receiver in receivers:
-        d = haversine(
+    for receiver in NGO.objects.all():
+        distance = calculate_distance(
             donor.latitude,
             donor.longitude,
             receiver.latitude,
-            receiver.longitude
+            receiver.longitude,
         )
-
-        if d < min_distance:
-            min_distance = d
+        if distance < minimum_distance:
             nearest = receiver
+            minimum_distance = distance
 
-    return nearest, min_distance
+    return nearest, minimum_distance

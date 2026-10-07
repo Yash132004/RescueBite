@@ -1,174 +1,268 @@
+{% extends "main/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <title>Donor Dashboard | FoodShare</title>
-    
+
+{% block title %}Donor Dashboard | RescueBite{% endblock %}
+
+{% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+{% endblock %}
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+{% block content %}
+    <main class="rb-section rb-section--tight">
+        <div class="rb-container">
 
-    <style>
-        body { background-color: #f4f7f6; }
-        .navbar-brand { font-weight: bold; color: #198754 !important; }
-        .card { border: none; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); transition: 0.3s; }
-        .card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
-        .btn-primary { background-color: #198754; border: none; padding: 10px 25px; border-radius: 10px; }
-        .btn-primary:hover { background-color: #146c43; }
-        .badge-status { font-size: 0.85rem; padding: 8px 12px; border-radius: 50px; }
-        .map-container { height: 300px; border-radius: 15px; margin-top: 15px; border: 1px solid #ddd; }
-        .section-title { font-weight: 700; color: #2d3436; margin-bottom: 20px; border-left: 5px solid #198754; padding-left: 15px; }
-    </style>
-</head>
-<body>
+            {% if total_donations is not None %}
+                <!-- Dashboard header -->
+                <div class="rb-dash-head">
+                    <div class="rb-page-head">
+                        <p class="rb-page-head__eyebrow">Donor dashboard</p>
+                        <h1>{{ donor.organization_name }}</h1>
+                        <p>Post surplus food, then track where it goes.</p>
+                    </div>
+                    <div class="rb-dash-head__actions">
+                        <a href="#new-donation" class="rb-btn rb-btn--primary" data-rb-scroll-to="#new-donation">
+                            <span aria-hidden="true">＋</span> New donation
+                        </a>
+                        <a href="{% url 'logout' %}" class="rb-btn rb-btn--outline">
+                            <span aria-hidden="true">↪</span> Logout
+                        </a>
+                    </div>
+                </div>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm mb-4">
-    <div class="container">
-        <a class="navbar-brand" href="/"><i class="fas fa-hand-holding-heart me-2"></i>FoodShare</a>
-        <div class="d-flex align-items-center">
-            <span class="me-3 text-muted d-none d-md-inline">Welcome, <strong>{{ donor.organization_name }}</strong></span>
-            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">Logout</a>
-        </div>
-    </div>
-</nav>
-
-<div class="container pb-5">
-
-    <div class="row">
-        <div class="col-lg-7">
-            <h3 class="section-title">Donations in process</h3>
-
-            {% if my_foods %}
-                {% for food in my_foods %}
-                    <div class="card mb-4 p-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                                <div>
-                                    <h5 class="fw-bold text-success">{{ food.name }}</h5>
-                                    <p class="mb-1 text-muted"><i class="fas fa-weight-hanging me-2"></i>Quantity: {{ food.food_quantity }}</p>
-                                    <p class="mb-0 text-muted"><i class="fas fa-calendar-alt me-2"></i>Posted: {{ food.created_at|date:"M d, Y H:i" }}</p>
-                                </div>
-                                <span class="badge badge-status {% if food.status == 'PENDING' %}bg-warning text-dark{% elif food.status == 'ASSIGNED' %}bg-primary{% else %}bg-success{% endif %}">
-                                    {{ food.status }}
-                                </span>
-                            </div>
-
-                            <hr>
-
-                            {% if food.assigned_ngo %}
-                                <div class="bg-light p-3 rounded-3">
-                                    <h6 class="fw-bold"><i class="fas fa-building me-2"></i>Claimed by: {{ food.assigned_ngo.organization_name }}</h6>
-                                    <p class="small text-muted mb-2"><i class="fas fa-map-marker-alt me-2"></i>Distance: {{ food.closest_distance_km }} km</p>
-                                    
-                                    <div id="map-{{ food.id }}" class="map-container"></div>
-                                </div>
-
-                                <script>
-                                    document.addEventListener("DOMContentLoaded", function() {
-                                        try {
-                                            var dLat = parseFloat("{{ food.donor.latitude }}");
-                                            var dLng = parseFloat("{{ food.donor.longitude }}");
-                                            var nLat = parseFloat("{{ food.assigned_ngo.latitude }}");
-                                            var nLng = parseFloat("{{ food.assigned_ngo.longitude }}");
-
-                                            if (!isNaN(dLat) && !isNaN(nLat)) {
-                                                var map = L.map('map-{{ food.id }}').setView([dLat, dLng], 13);
-                                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-                                                L.marker([dLat, dLng]).addTo(map).bindPopup("You (Donor)");
-                                                L.marker([nLat, nLng]).addTo(map).bindPopup("NGO: {{ food.assigned_ngo.organization_name }}");
-
-                                                var polyline = L.polyline([[dLat, dLng], [nLat, nLng]], {color: '#198754', weight: 4, dashArray: '5, 10'}).addTo(map);
-                                                map.fitBounds(polyline.getBounds(), {padding: [30, 30]});
-                                            }
-                                        } catch (e) { console.error(e); }
-                                    });
-                                </script>
-                            {% else %}
-                                <div class="text-center py-3">
-                                    <div class="spinner-grow spinner-grow-sm text-success" role="status"></div>
-                                    <span class="ms-2 text-muted italic">Searching for nearby NGO partners...</span>
-                                </div>
-                            {% endif %}
+                <!-- Summary cards: donor's own figures from donor_dashboard -->
+                <div class="rb-panel-stats">
+                    <div class="rb-panel-stat">
+                        <span class="rb-panel-stat__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-package preview-icon"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><polyline points="3.29 7 12 12 20.71 7"/><path d="m7.5 4.27 9 5.15"/></svg></span>
+                        <div>
+                            <p class="rb-panel-stat__label">Donations posted</p>
+                            <p class="rb-panel-stat__value">{{ total_donations }}</p>
+                            <p class="rb-panel-stat__hint">All time</p>
                         </div>
                     </div>
-                {% endfor %}
-            {% else %}
-                <div class="card p-5 text-center">
-                    <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                    <p class="text-muted">No donations found. Donate the food to see the impact!</p>
+                    <div class="rb-panel-stat rb-panel-stat--accent">
+                        <span class="rb-panel-stat__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-days preview-icon"><path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M8 13h.01"/><path d="M12 13h.01"/><path d="M16 13h.01"/><path d="M8 17h.01"/><path d="M12 17h.01"/><path d="M16 17h.01"/></svg></span>
+                        <div>
+                            <p class="rb-panel-stat__label">This month</p>
+                            <p class="rb-panel-stat__value">{{ monthly_donations }}</p>
+                            <p class="rb-panel-stat__hint">Posted in the last 30 days</p>
+                        </div>
+                    </div>
+                    <div class="rb-panel-stat rb-panel-stat--neutral">
+                        <span class="rb-panel-stat__icon" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-notebook-tabs preview-icon"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M15 2v20"/><path d="M15 7h5"/><path d="M15 12h5"/><path d="M15 17h5"/></svg></span>
+                        <div>
+                            <p class="rb-panel-stat__label">Open listings</p>
+                            <p class="rb-panel-stat__value">{{ open_food_count }}</p>
+                            <p class="rb-panel-stat__hint">Available or pickup requested</p>
+                        </div>
+                    </div>
                 </div>
             {% endif %}
-        </div>
 
-        <div class="col-lg-5">
-            <h3 class="section-title">New Donation</h3>
-            <div class="card p-4">
-                <div class="card-body">
-                    <form method="POST" action="{% url 'create_food_donation' %}" enctype="multipart/form-data" id="donationForm"> <!---->
-                        {% csrf_token %}
-                        
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Food Name/Type</label>
-                            <input type="text" class="form-control" name="name" placeholder="e.g. Veg Biryani, Bread & Jam" required>
+            <div class="rb-dashboard rb-dashboard--split">
+
+                <!-- Existing donations -->
+                <section aria-labelledby="donations-heading">
+                    {% if my_foods is not None %}
+                        <h2 id="donations-heading" class="rb-section-title">Your donations</h2>
+
+                        <div class="rb-donation-list">
+                            {% for food in my_foods %}
+                                <article class="rb-donation-card" data-status="{{ food.status }}">
+                                    <div class="rb-donation-card__media">
+                                        {% if food.image %}
+                                            <img src="{{ food.image.url }}" loading="lazy" decoding="async" alt="{{ food.name }}">
+                                        {% else %}
+                                            <div class="rb-donation-card__placeholder" aria-hidden="true"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-utensils-crossed preview-icon"><path d="m16 2-2.3 2.3a3 3 0 0 0 0 4.2l1.8 1.8a3 3 0 0 0 4.2 0L22 8"/><path d="M15 15 3.3 3.3a4.2 4.2 0 0 0 0 6l7.3 7.3c.7.7 2 .7 2.8 0L15 15Zm0 0 7 7"/><path d="m2.1 21.8 6.4-6.3"/><path d="m19 5-7 7"/></svg></div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="rb-donation-card__body">
+                                        <div class="rb-donation-card__head">
+                                            <h3 class="rb-donation-card__name">{{ food.name }}</h3>
+                                            <span class="rb-status{% if food.status == 'PENDING' %} rb-status--pending{% elif food.status == 'ASSIGNED' %} rb-status--assigned{% elif food.status == 'IN_TRANSIT' %} rb-status--in-transit{% elif food.status == 'RECEIVED' %} rb-status--received{% elif food.status == 'AVAILABLE' %} rb-status--available{% else %} rb-status--neutral{% endif %}">
+                                                <span class="rb-status__dot" aria-hidden="true"></span>
+                                                {% if food.status == 'AVAILABLE' %}Available for pickup{% elif food.status == 'PENDING' %}Pickup requested{% elif food.status == 'ASSIGNED' %}Assigned to NGO{% elif food.status == 'IN_TRANSIT' %}In transit{% elif food.status == 'RECEIVED' %}Received{% elif food.status == 'EXPIRED' %}Expired{% elif food.status == 'CANCELLED' %}Cancelled{% else %}{{ food.status }}{% endif %}
+                                            </span>
+                                        </div>
+
+                                        <dl class="rb-donation-card__facts">
+                                            <div class="rb-donation-card__fact">
+                                                <dt>Quantity</dt>
+                                                <dd>{{ food.food_quantity }}</dd>
+                                            </div>
+                                            <div class="rb-donation-card__fact">
+                                                <dt>Shelf life</dt>
+                                                <dd>{{ food.expiry_hours }} hours</dd>
+                                            </div>
+                                            <div class="rb-donation-card__fact">
+                                                <dt>Posted</dt>
+                                                <dd>{{ food.created_at|date:"M d, Y H:i" }}</dd>
+                                            </div>
+                                            {% if food.assigned_ngo %}
+                                                <div class="rb-donation-card__fact">
+                                                    <dt>NGO</dt>
+                                                    <dd>{{ food.assigned_ngo.organization_name }}</dd>
+                                                </div>
+                                                <div class="rb-donation-card__fact">
+                                                    <dt>Distance</dt>
+                                                    <dd>{{ food.closest_distance_km }} km away</dd>
+                                                </div>
+                                            {% endif %}
+                                        </dl>
+
+                                        {% if food.assigned_ngo %}
+                                            <div class="rb-donation-card__map">
+                                                <div class="rb-map-card">
+                                                    <p class="rb-map-card__head">
+                                                        Pickup route to {{ food.assigned_ngo.organization_name }}
+                                                    </p>
+                                                    <div id="map-{{ food.id }}" class="rb-map" data-rb-map
+                                                         role="img"
+                                                         aria-label="Map from the donation pickup location to {{ food.assigned_ngo.organization_name }}"
+                                                         data-donor-lat="{% if food.pickup_latitude is not None %}{{ food.pickup_latitude }}{% else %}{{ food.donor.latitude }}{% endif %}"
+                                                         data-donor-lng="{% if food.pickup_longitude is not None %}{{ food.pickup_longitude }}{% else %}{{ food.donor.longitude }}{% endif %}"
+                                                         data-ngo-lat="{{ food.assigned_ngo.latitude }}"
+                                                         data-ngo-lng="{{ food.assigned_ngo.longitude }}"
+                                                         data-ngo-name="{{ food.assigned_ngo.organization_name }}"></div>
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="rb-searching">
+                                                <span class="rb-spinner" aria-hidden="true"></span>
+                                                Searching for nearby NGO partners...
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </article>
+                            {% empty %}
+                                <div class="rb-empty">
+                                    <div class="rb-empty__icon" aria-hidden="true">📦</div>
+                                    <p class="rb-empty__title">No donations yet</p>
+                                    <p class="rb-mb-4">Donations you post appear here with their latest status.</p>
+                                    <a href="#new-donation" class="rb-btn rb-btn--primary" data-rb-scroll-to="#new-donation">
+                                        Post your first donation
+                                    </a>
+                                </div>
+                            {% endfor %}
                         </div>
+                    {% endif %}
+                </section>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Total Quantity</label>
-                            <input type="text" class="form-control" name="food_quantity" placeholder="e.g. 10 kg, 50 Plates" required>
-                        </div>
+                <!-- Create donation -->
+                <section id="new-donation" aria-labelledby="new-donation-heading">
+                    <h2 id="new-donation-heading" class="rb-section-title">New donation</h2>
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Shelf Life (Hours)</label>
-                            <input type="number" class="form-control" name="expiry_hours" value="24" min="1" required>
-                            <div class="form-text">How long is this food safe to consume?</div>
-                        </div>
+                    <div class="rb-card rb-card--padded">
+                        {% if form.errors %}
+                            <div class="rb-alert rb-alert--error" role="alert">
+                                <span aria-hidden="true">⚠</span>
+                                <div>
+                                    <strong>Please fix the following:</strong>
+                                    {{ form.errors }}
+                                </div>
+                            </div>
+                        {% endif %}
 
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Food Image</label>
-                            <input type="file" class="form-control" name="image">
-                        </div>
+                        <form method="post" action="{% url 'create_food_donation' %}" enctype="multipart/form-data"
+                              id="donationForm" class="rb-form-stack">
+                            {% csrf_token %}
 
-                        <div class="alert alert-info py-2 small">
-                            <i class="fas fa-info-circle me-2"></i> We will use your registered location to find the nearest NGO.
-                        </div>
+                            <div class="rb-field">
+                                <label class="rb-field__label" for="id_food_name">Food name or type</label>
+                                <input type="text" id="id_food_name" class="rb-input" name="name"
+                                       placeholder="e.g. Veg Biryani, Bread &amp; Jam" required
+                                       value="{% if form.name.value %}{{ form.name.value }}{% endif %}">
+                                {% if form.name.errors %}
+                                    <p class="rb-field__error">{{ form.name.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
 
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <i class="fas fa-paper-plane me-2"></i>Submit Donation
+                            <div class="rb-field">
+                                <label class="rb-field__label" for="id_food_quantity">Total quantity</label>
+                                <input type="text" id="id_food_quantity" class="rb-input" name="food_quantity"
+                                       placeholder="e.g. 10 kg, 50 plates" required
+                                       value="{% if form.food_quantity.value %}{{ form.food_quantity.value }}{% endif %}">
+                                {% if form.food_quantity.errors %}
+                                    <p class="rb-field__error">{{ form.food_quantity.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="rb-field">
+                                <label class="rb-field__label" for="id_expiry_hours">Shelf life (hours)</label>
+                                <input type="number" id="id_expiry_hours" class="rb-input" name="expiry_hours"
+                                       min="1" required
+                                       value="{% if form.expiry_hours.value %}{{ form.expiry_hours.value }}{% else %}24{% endif %}"
+                                       aria-describedby="id_expiry_hours-hint">
+                                <p class="rb-field__hint" id="id_expiry_hours-hint">How long is this food safe to consume?</p>
+                                {% if form.expiry_hours.errors %}
+                                    <p class="rb-field__error">{{ form.expiry_hours.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="rb-field">
+                                <label class="rb-field__label" for="id_image">Food image</label>
+                                <div class="rb-file">
+                                    <input type="file" id="id_image" class="rb-input" name="image"
+                                           accept="image/*" data-rb-preview="#imagePreview">
+                                    <div class="rb-file__preview" id="imagePreview" aria-live="polite">
+                                        <img alt="Preview of the food image you selected">
+                                    </div>
+                                </div>
+                                <p class="rb-field__hint">Optional. Helps NGOs know what to expect.</p>
+                                {% if form.image.errors %}
+                                    <p class="rb-field__error">{{ form.image.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="rb-field">
+                                <label class="rb-field__label" for="id_description">Description</label>
+                                <textarea id="id_description" class="rb-input" name="description" rows="3"
+                                          placeholder="e.g. Vegetarian, packed in sealed trays">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+                                <p class="rb-field__hint">Optional. Helps NGOs and volunteers prepare for the handover.</p>
+                                {% if form.description.errors %}
+                                    <p class="rb-field__error">{{ form.description.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="rb-field">
+                                <label class="rb-field__label" for="id_pickup_latitude">Pickup latitude</label>
+                                <input type="number" step="any" inputmode="decimal"
+                                       id="id_pickup_latitude" class="rb-input" name="pickup_latitude"
+                                       placeholder="Leave blank to use your registered location"
+                                       value="{% if form.pickup_latitude.value %}{{ form.pickup_latitude.value }}{% endif %}">
+                                {% if form.pickup_latitude.errors %}
+                                    <p class="rb-field__error">{{ form.pickup_latitude.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div class="rb-field">
+                                <label class="rb-field__label" for="id_pickup_longitude">Pickup longitude</label>
+                                <input type="number" step="any" inputmode="decimal"
+                                       id="id_pickup_longitude" class="rb-input" name="pickup_longitude"
+                                       placeholder="Leave blank to use your registered location"
+                                       value="{% if form.pickup_longitude.value %}{{ form.pickup_longitude.value }}{% endif %}">
+                                {% if form.pickup_longitude.errors %}
+                                    <p class="rb-field__error">{{ form.pickup_longitude.errors|striptags }}</p>
+                                {% endif %}
+                            </div>
+
+                            <p class="rb-note">We will use your registered location to find the nearest NGO.</p>
+
+                            <button type="submit" class="rb-btn rb-btn--primary rb-btn--block rb-btn--lg">
+                                Submit donation
                             </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-
-            <div class="row mt-4">
-                <div class="col-12 mb-3">
-                    <div class="card bg-success text-white p-3">
-                        <div class="card-body text-center">
-                            <h6 class="text-uppercase small opacity-75">Impact This Month</h6>
-                            <h2 class="display-6 fw-bold mb-0">{{ monthly_donations }}</h2>
-                        </div>
+                        </form>
                     </div>
-                </div>
-                <div class="col-12">
-                    <div class="card bg-dark text-white p-3">
-                        <div class="card-body text-center">
-                            <h6 class="text-uppercase small opacity-75">Total Meals Shared</h6>
-                            <h2 class="display-6 fw-bold mb-0">{{ total_donations }}</h2>
-                        </div>
-                    </div>
-                </div>
+                </section>
             </div>
         </div>
-    </div>
-</div>
+    </main>
+{% endblock %}
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-</body>
-</html>
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static 'main/js/maps.js' %}"></script>
+{% endblock %}

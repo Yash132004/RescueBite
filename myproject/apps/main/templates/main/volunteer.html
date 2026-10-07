@@ -1,249 +1,248 @@
+{% extends "main/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Volunteer Dashboard | Share a Meal</title>
-    
-    <!-- Bootstrap -->
+
+{% block title %}Volunteer Dashboard | RescueBite{% endblock %}
+
+{% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/all.min.css">
-    <!-- Leaflet -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css">
+{% endblock %}
 
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
+{% block content %}
+    <main class="rb-section rb-section--tight">
+        <div class="rb-container" data-rb-accept-url="{% url 'volunteer_accept_delivery' %}">
 
-        #map {
-            height: 260px;
-            border-radius: 12px;
-        }
-
-        /* Hide routing instructions */
-        .leaflet-routing-container {
-            display: none !important;
-        }
-    </style>
-</head>
-<body>
-
-<!-- ================= NAVBAR ================= -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="{% url 'home' %}">
-            <i class="fas fa-hand-holding-heart me-2"></i>Share a Meal
-        </a>
-
-        <div class="ms-auto d-flex align-items-center">
-            <span class="me-3 text-muted d-none d-md-inline">
-                Volunteer
-            </span>
-            <a href="{% url 'home' %}" class="btn btn-outline-primary btn-sm me-2">
-                <i class="fas fa-home me-1"></i>Home
-            </a>
-            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-sm">
-                Logout
-            </a>
-        </div>
-    </div>
-</nav>
-
-<!-- ================= HEADER ================= -->
-<div class="bg-primary text-white py-4 mb-4">
-    <div class="container text-center">
-        <h2 class="fw-bold mb-1">Volunteer Dashboard</h2>
-        <p class="mb-0 opacity-75">Active food rescue missions assigned to you</p>
-    </div>
-</div>
-
-<div class="container mb-5">
-
-    <!-- ================= MAP CARD ================= -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white fw-bold">
-                    <i class="fas fa-map-marked-alt me-2 text-primary"></i>Delivery Routes
-                </div>
-                <div class="card-body p-2">
-                    <div id="map"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ================= TASK LIST ================= -->
-    <div class="row g-4">
-        <div class="col-12">
-            <h5 class="fw-bold mb-3">
-                <i class="fas fa-route me-2 text-primary"></i>Assigned Deliveries
-            </h5>
-        </div>
-
-        {% for task in assigned_tasks %}
-        <div class="col-md-6 task-item" 
-             data-plat="{{ task.donor.latitude }}" 
-             data-plon="{{ task.donor.longitude }}"
-             data-dlat="{{ task.assigned_ngo.latitude }}" 
-             data-dlon="{{ task.assigned_ngo.longitude }}"
-             data-donor="{{ task.donor.organization_name|escapejs }}"
-             data-ngo="{{ task.assigned_ngo.organization_name|escapejs }}">
-            
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="fw-bold text-primary mb-0">
-                            Delivery #{{ task.id }}
-                        </h6>
-                        <span class="badge bg-warning text-dark">
-                            {{ task.status }}
-                        </span>
-                    </div>
-
-                    <p class="mb-3">
-                        <i class="fas fa-utensils me-2 text-muted"></i>
-                        <strong>{{ task.name }}</strong><br>
-                        <small class="text-muted">Quantity: {{ task.food_quantity }}</small>
+            <!-- ===================== summary / header ===================== -->
+            <header class="rb-page-head rb-page-head--split">
+                <div>
+                    <p class="rb-page-head__eyebrow">Volunteer dashboard</p>
+                    <h1>Your rescue missions</h1>
+                    <p class="rb-prose-lead">
+                        Pick a delivery, confirm the route, and move surplus food from the donor
+                        to the NGO that needs it.
                     </p>
-
-                    <div class="mb-3">
-                        <small class="text-uppercase text-muted fw-bold">Pickup From</small>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <span>{{ task.donor.organization_name }}</span>
-                            <a class="btn btn-sm btn-outline-primary"
-                               target="_blank"
-                               href="https://www.google.com/maps/dir/?api=1&destination={{ task.donor.latitude }},{{ task.donor.longitude }}">
-                                <i class="fas fa-location-arrow"></i>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <small class="text-uppercase text-muted fw-bold">Deliver To</small>
-                        <div>{{ task.assigned_ngo.organization_name }}</div>
-                    </div>
-
-                    <button class="btn btn-success"
-                        onclick="acceptDelivery('{{ task.id }}', this)">
-                        <i class="fas fa-check-circle me-2"></i>Accept
-                    </button>
-
-
                 </div>
+                <div class="rb-page-head__aside">
+                    <span class="rb-count-pill">
+                        <strong data-rb-stat="active">{{ summary.active }}</strong>
+                        active deliver{{ summary.active|pluralize:"y,ies" }}
+                    </span>
+                    <a class="rb-btn rb-btn--outline" href="{% url 'logout' %}">Log out</a>
+                </div>
+            </header>
+
+            <!-- volunteer.js keeps these counters in step as deliveries are accepted. -->
+            <section class="rb-panel-stats" aria-label="Delivery summary">
+                <div class="rb-panel-stat">
+                    <span class="rb-panel-stat__icon" aria-hidden="true"><i class="fa-solid fa-truck-ramp-box"></i></span>
+                    <div>
+                        <p class="rb-panel-stat__label">Active deliveries</p>
+                        <p class="rb-panel-stat__value" data-rb-stat="active">{{ summary.active }}</p>
+                        <p class="rb-panel-stat__hint">Waiting for you to accept</p>
+                    </div>
+                </div>
+                <div class="rb-panel-stat rb-panel-stat--accent">
+                    <span class="rb-panel-stat__icon" aria-hidden="true"><i class="fa-solid fa-route"></i></span>
+                    <div>
+                        <p class="rb-panel-stat__label">Route stops</p>
+                        <p class="rb-panel-stat__value" data-rb-stat="stops">{{ summary.stops }}</p>
+                        <p class="rb-panel-stat__hint">Pickups and drop-offs combined</p>
+                    </div>
+                </div>
+                <div class="rb-panel-stat rb-panel-stat--neutral">
+                    <span class="rb-panel-stat__icon" aria-hidden="true"><i class="fa-solid fa-utensils"></i></span>
+                    <div>
+                        <p class="rb-panel-stat__label">Donor kitchens</p>
+                        <p class="rb-panel-stat__value" data-rb-stat="donors">{{ summary.donors }}</p>
+                        <p class="rb-panel-stat__hint">Food to collect</p>
+                    </div>
+                </div>
+                <div class="rb-panel-stat rb-panel-stat--neutral">
+                    <span class="rb-panel-stat__icon" aria-hidden="true"><i class="fa-solid fa-hand-holding-heart"></i></span>
+                    <div>
+                        <p class="rb-panel-stat__label">Partner NGOs</p>
+                        <p class="rb-panel-stat__value" data-rb-stat="ngos">{{ summary.ngos }}</p>
+                        <p class="rb-panel-stat__hint">Waiting to receive</p>
+                    </div>
+                </div>
+            </section>
+
+            {% if summary.expiring %}
+                <div class="rb-alert rb-alert--warning rb-mb-6" role="status">
+                    <strong>{{ summary.expiring }}</strong> of these deliveries are past their
+                    shelf life. Confirm with the NGO before you collect.
+                </div>
+            {% endif %}
+
+            <!-- ===================== route / map card ===================== -->
+            <section class="rb-map-card rb-route-card" aria-labelledby="routeCardTitle">
+                <div class="rb-route-card__head">
+                    <h2 class="rb-route-card__title" id="routeCardTitle">
+                        <i class="fa-solid fa-map-location-dot" aria-hidden="true"></i>
+                        Delivery routes
+                    </h2>
+                    <ul class="rb-map-legend">
+                        <li class="rb-map-legend__item">
+                            <span class="rb-map-legend__dot rb-map-legend__dot--pickup" aria-hidden="true"></span>
+                            Pickup
+                        </li>
+                        <li class="rb-map-legend__item">
+                            <span class="rb-map-legend__dot rb-map-legend__dot--drop" aria-hidden="true"></span>
+                            Drop-off
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="rb-map-frame">
+                    <div id="map" class="rb-map rb-map--tall"
+                         role="application"
+                         aria-label="Map showing the pickup and drop-off point for each assigned delivery"></div>
+
+                    <!-- Leaflet covers this once the map initialises. The fallback
+                         stays put if the Leaflet bundle cannot be loaded. -->
+                    <div class="rb-map-notice" data-rb-map-loading>
+                        <span class="rb-spinner" aria-hidden="true"></span>
+                        <span class="rb-map-notice__title">Loading routes&hellip;</span>
+                    </div>
+                    <div class="rb-map-notice" data-rb-map-fallback hidden>
+                        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                        <span class="rb-map-notice__title">Map unavailable</span>
+                        <span>The map could not be loaded. Use the directions link on each delivery below.</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================== delivery cards ===================== -->
+            <div class="rb-section-head">
+                <h2 class="rb-section-title rb-mb-0">Assigned deliveries</h2>
+                <span class="rb-count-pill">
+                    <strong data-rb-stat="active">{{ summary.active }}</strong>
+                    waiting
+                </span>
             </div>
-        </div>
-        {% empty %}
-        <div class="col-12">
-            <div class="alert alert-info text-center py-4">
-                <i class="fas fa-clipboard-check fa-2x mb-2"></i>
-                <h6 class="mb-1">All caught up!</h6>
-                <p class="mb-0">No active deliveries assigned right now.</p>
+
+            <!-- The accept request is sent by AJAX and carries the CSRF token in a
+                 header. Rendering it here guarantees the token exists on this page
+                 instead of relying on a cookie left behind by an earlier form. -->
+            {% csrf_token %}
+
+            <div class="rb-delivery-grid" id="deliveryList" aria-live="polite">
+                {% for task in assigned_tasks %}
+                    <article class="rb-task-card rb-delivery-card task-item"
+                             data-id="{{ task.id }}"
+                             data-plat="{% if task.pickup_latitude is not None and task.pickup_longitude is not None %}{{ task.pickup_latitude }}{% else %}{{ task.donor.latitude }}{% endif %}"
+                             data-plon="{% if task.pickup_latitude is not None and task.pickup_longitude is not None %}{{ task.pickup_longitude }}{% else %}{{ task.donor.longitude }}{% endif %}"
+                             data-dlat="{{ task.assigned_ngo.latitude }}"
+                             data-dlon="{{ task.assigned_ngo.longitude }}"
+                             data-donor="{{ task.donor.organization_name|escapejs }}"
+                             data-ngo="{{ task.assigned_ngo.organization_name|escapejs }}"
+                             aria-labelledby="delivery{{ task.id }}Title">
+
+                        <div class="rb-meal-card__media">
+                            {% if task.image %}
+                                <img src="{{ task.image.url }}" loading="lazy" decoding="async"
+                                     alt="{{ task.name }} donated by {{ task.donor.organization_name }}">
+                            {% else %}
+                                <div class="rb-meal-card__placeholder" aria-hidden="true">
+                                    <i class="fa-solid fa-bowl-food"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="rb-task-card__head">
+                            <p class="rb-task-card__ref">Delivery #{{ task.id }}</p>
+                            <span class="rb-status rb-delivery-card__status
+                                    {% if task.status == 'ASSIGNED' %}rb-status--assigned
+                                    {% elif task.status == 'IN_TRANSIT' %}rb-status--in-transit
+                                    {% elif task.status == 'RECEIVED' %}rb-status--received
+                                    {% else %}rb-status--neutral{% endif %}">
+                                <span class="rb-status__dot" aria-hidden="true"></span>{{ task.status }}
+                            </span>
+                        </div>
+
+                        <h3 class="rb-delivery-card__name" id="delivery{{ task.id }}Title">{{ task.name }}</h3>
+
+                        <div class="rb-delivery-card__meta">
+                            <span class="rb-chip">{{ task.food_quantity }}</span>
+                            {% if task.is_expired %}
+                                <span class="rb-chip rb-chip--stale">Past shelf life</span>
+                            {% else %}
+                                <span class="rb-chip rb-chip--fresh">{{ task.expiry_hours }}h shelf life</span>
+                            {% endif %}
+                        </div>
+
+                        {% if task.description %}
+                            <p class="rb-delivery-card__desc">{{ task.description }}</p>
+                        {% endif %}
+
+                        <!-- pickup -> destination, drawn as a connected route -->
+                        <div class="rb-route">
+                            <div class="rb-route__leg">
+                                <div class="rb-route__marker" aria-hidden="true">
+                                    <span class="rb-route__dot rb-route__dot--pickup"></span>
+                                    <span class="rb-route__line"></span>
+                                </div>
+                                <div class="rb-route__body">
+                                    <p class="rb-route__label">Pickup from</p>
+                                    <p class="rb-route__name">{{ task.donor.organization_name }}</p>
+                                    <p class="rb-route__coords">
+                                        {% if task.pickup_latitude is not None and task.pickup_longitude is not None %}{{ task.pickup_latitude }}, {{ task.pickup_longitude }}{% else %}{{ task.donor.latitude }}, {{ task.donor.longitude }}{% endif %}
+                                        {% if task.pickup_latitude is not None and task.pickup_longitude is not None %}
+                                            <span class="rb-chip">Custom pickup point</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="rb-route__leg rb-route__leg--drop">
+                                <div class="rb-route__marker" aria-hidden="true">
+                                    <span class="rb-route__dot rb-route__dot--drop"></span>
+                                </div>
+                                <div class="rb-route__body">
+                                    <p class="rb-route__label">Deliver to</p>
+                                    <p class="rb-route__name">{{ task.assigned_ngo.organization_name }}</p>
+                                    <p class="rb-route__coords">{{ task.assigned_ngo.latitude }}, {{ task.assigned_ngo.longitude }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rb-delivery-card__actions d-grid">
+                            <a class="rb-btn rb-btn--outline"
+                               target="_blank"
+                               rel="noopener"
+                               aria-label="Open directions to {{ task.donor.organization_name }}"
+                               href="https://www.google.com/maps/dir/?api=1&amp;destination={% if task.pickup_latitude is not None and task.pickup_longitude is not None %}{{ task.pickup_latitude }},{{ task.pickup_longitude }}{% else %}{{ task.donor.latitude }},{{ task.donor.longitude }}{% endif %}">Directions</a>
+                            <button type="button"
+                                    class="rb-btn rb-btn--primary"
+                                    data-rb-accept="{{ task.id }}"
+                                    aria-label="Accept delivery {{ task.id }}: {{ task.name }} from {{ task.donor.organization_name }} to {{ task.assigned_ngo.organization_name }}">
+                                <span class="rb-spinner" data-rb-spinner hidden aria-hidden="true"></span>
+                                <span data-rb-label>Accept delivery</span>
+                            </button>
+                        </div>
+                    </article>
+                {% endfor %}
             </div>
+
+            <!-- Rendered when there is genuinely nothing to do, so the page is
+                 still meaningful without JavaScript. volunteer.js owns it once
+                 deliveries are accepted from the list above. -->
+            {% if not assigned_tasks %}
+                <div class="rb-empty" data-rb-empty>
+                    <div class="rb-empty__icon" aria-hidden="true"><i class="fa-solid fa-clipboard-check"></i></div>
+                    <p class="rb-empty__title">All caught up!</p>
+                    <p class="mb-0">No deliveries are waiting for you right now. New assignments appear
+                        here as soon as an NGO claims a donation.</p>
+                </div>
+            {% endif %}
         </div>
-        {% endfor %}
-    </div>
-</div>
+    </main>
+{% endblock %}
 
-<!-- ================= SCRIPTS ================= -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-
-    const taskElements = document.querySelectorAll('.task-item');
-
-    // Default center
-    let centerLat = 22.3072;
-    let centerLon = 73.1812;
-
-    if (taskElements.length > 0) {
-        const first = taskElements[0];
-        centerLat = parseFloat(first.dataset.plat);
-        centerLon = parseFloat(first.dataset.plon);
-    }
-
-    const map = L.map('map').setView([centerLat, centerLon], 12);
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap'
-    }).addTo(map);
-
-    // Draw Donor → NGO routes
-    taskElements.forEach(item => {
-        const pLat = parseFloat(item.dataset.plat);
-        const pLon = parseFloat(item.dataset.plon);
-        const dLat = parseFloat(item.dataset.dlat);
-        const dLon = parseFloat(item.dataset.dlon);
-        const donorName = item.dataset.donor;
-        const ngoName = item.dataset.ngo;
-
-        if (!isNaN(pLat) && !isNaN(dLat)) {
-            L.Routing.control({
-                waypoints: [
-                    L.latLng(pLat, pLon),
-                    L.latLng(dLat, dLon)
-                ],
-                router: L.Routing.osrmv1({
-                    serviceUrl: 'https://router.project-osrm.org/route/v1'
-                }),
-                lineOptions: {
-                    styles: [{ color: '#0d6efd', opacity: 0.85, weight: 5 }]
-                },
-                addWaypoints: false,
-                draggableWaypoints: false,
-                fitSelectedRoutes: true,
-                show: false,
-                createMarker: function(i, wp) {
-                    const label = (i === 0)
-                        ? `<b>Pickup:</b> ${donorName}`
-                        : `<b>Drop:</b> ${ngoName}`;
-                    return L.marker(wp.latLng).bindPopup(label);
-                }
-            }).addTo(map);
-        }
-    });
-
-});
-
-function acceptDelivery(foodId, btn) {
-    fetch("{% url 'volunteer_accept_delivery' %}", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCSRF()
-        },
-        body: JSON.stringify({ food_id: foodId })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            // Remove the card from dashboard
-            const card = btn.closest('.task-item');
-            if(card) card.remove();
-            alert(data.message);
-        } else {
-            alert(data.error);
-        }
-    });
-}
-
-function getCSRF() {
-    return document.cookie.split('; ')
-        .find(row => row.startsWith('csrftoken='))
-        ?.split('=')[1];
-}
-
-
-
-</script>
-
-</body>
-</html>
+{% block extra_js %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+    <script src="{% static 'main/js/volunteer.js' %}"></script>
+{% endblock %}
