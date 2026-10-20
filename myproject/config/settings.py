@@ -37,13 +37,13 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Quick-start development settings - production values come from the environment.
-# DEBUG = 'RENDER' not in os.environ and os.environ.get('DEBUG', 'False').strip().lower() in {'true', '1', 'yes', 'on'}
-# SECRET_KEY = os.environ.get('SECRET_KEY', '')
-# if not SECRET_KEY:
-#     if 'RENDER' in os.environ:
-#         raise ImproperlyConfigured('Set SECRET_KEY in the environment when DEBUG=False.')
-#     SECRET_KEY = 'django-insecure-local-development-only'
-DEBUG = False
+DEBUG = 'RENDER' not in os.environ and os.environ.get('DEBUG', 'False').strip().lower() in {'true', '1', 'yes', 'on'}
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
+if not SECRET_KEY:
+    if 'RENDER' in os.environ:
+        raise ImproperlyConfigured('Set SECRET_KEY in the environment when DEBUG=False.')
+    SECRET_KEY = 'django-insecure-local-development-only'
+
 
 ALLOWED_HOSTS = ['rescuebite-uufn.onrender.com', '127.0.0.1', 'localhost', 'testserver']
 if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
