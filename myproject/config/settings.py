@@ -39,7 +39,7 @@ SECRET_KEY = 'django-insecure-9p*31z(fyp!1i_mi!8^y^byuq%if2a70!*$q@sclid=p0s&*cv
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['YashOjha01.pythonanywhere.com', '127.0.0.1', 'localhost', 'testserver']
+ALLOWED_HOSTS = ['https://rescuebite-uufn.onrender.com/', '127.0.0.1', 'localhost', 'testserver']
 
 
 # Application definition
