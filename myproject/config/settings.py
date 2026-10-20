@@ -37,7 +37,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = 'django-insecure-9p*31z(fyp!1i_mi!8^y^byuq%if2a70!*$q@sclid=p0s&*cv'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['https://rescuebite-uufn.onrender.com/', '127.0.0.1', 'localhost', 'testserver']
 
