@@ -6,6 +6,8 @@ Configuration package: config
 from pathlib import Path
 import os
 
+from django.core.exceptions import ImproperlyConfigured
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -34,12 +36,22 @@ _load_project_env(BASE_DIR / ".env")
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# Quick-start development settings - unsuitable for production
-SECRET_KEY = 'django-insecure-9p*31z(fyp!1i_mi!8^y^byuq%if2a70!*$q@sclid=p0s&*cv'
-
-DEBUG = False
+# Quick-start development settings - production values come from the environment.
+DEBUG = 'RENDER' not in os.environ and os.environ.get('DEBUG', 'False').strip().lower() in {'true', '1', 'yes', 'on'}
+SECRET_KEY = os.environ.get('SECRET_KEY', '')
+if not SECRET_KEY:
+    if 'RENDER' in os.environ:
+        raise ImproperlyConfigured('Set SECRET_KEY in the environment when DEBUG=False.')
+    SECRET_KEY = 'django-insecure-local-development-only'
 
 ALLOWED_HOSTS = ['rescuebite-uufn.onrender.com', '127.0.0.1', 'localhost', 'testserver']
+if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
+    ALLOWED_HOSTS.append(os.environ['RENDER_EXTERNAL_HOSTNAME'])
+ALLOWED_HOSTS += [
+    host.strip()
+    for host in os.environ.get('ALLOWED_HOSTS', '').split(',')
+    if host.strip()
+]
 
 
 # Application definition
@@ -56,6 +68,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -135,9 +148,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'apps' / 'main' / 'static',
-]
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
 
 
 LOGIN_REDIRECT_URL = 'home'
