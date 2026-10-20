@@ -30,7 +30,7 @@ SECRET_KEY = 'django-insecure-9p*31z(fyp!1i_mi!8^y^byuq%if2a70!*$q@sclid=p0s&*cv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["rescuebite-uufn.onrender.com"]
 
 
 # Application definition
