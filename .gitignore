@@ -5,6 +5,8 @@ __pycache__/
 
 # Environments
 env/
+.env
+myproject/.env
 venv/
 ENV/
 
